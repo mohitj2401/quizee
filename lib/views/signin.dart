@@ -7,6 +7,7 @@ import 'package:athena/views/signup.dart';
 import 'package:dio/dio.dart';
 
 import 'package:flutter/material.dart';
+import 'package:ndialog/ndialog.dart';
 
 class SignIn extends StatefulWidget {
   @override
@@ -30,7 +31,7 @@ class _SignInState extends State<SignIn> {
       });
       try {
         Response response = await Dio()
-            .post("http://192.168.137.143/flutter/public/api/login", data: {
+            .post("http://192.168.137.1/flutter/public/api/login", data: {
           "email": emailTextEditingController.text,
           'password': passwordTextEditingController.text,
         });
@@ -61,6 +62,22 @@ class _SignInState extends State<SignIn> {
         }
       } catch (e) {
         print(e);
+        setState(() {
+          isLoading = false;
+        });
+        await NAlertDialog(
+          dismissable: false,
+          dialogStyle: DialogStyle(titleDivider: true),
+          title: Text("Opps Something Went Worng!"),
+          content: Text("Please check your connectivity and try Again.."),
+          actions: <Widget>[
+            TextButton(
+                child: Text("Ok"),
+                onPressed: () {
+                  Navigator.pop(context);
+                }),
+          ],
+        ).show(context);
       }
       // await authService
       //     .signInEmailAndPass(emailTextEditingController.text,

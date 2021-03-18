@@ -8,6 +8,7 @@ import 'package:athena/views/signin.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:ndialog/ndialog.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -31,16 +32,16 @@ class _SignUpState extends State<SignUp> {
       });
       try {
         Response response = await Dio()
-            .post("http://192.168.137.143/flutter/public/api/register", data: {
+            .post("http://192.168.137.1/flutter/public/api/register", data: {
           "name": nameTextEditingController.text,
           "email": emailTextEditingController.text,
           "role": "student",
           'password': passwordTextEditingController.text,
         });
-        print(response);
+
         if (response.data['email'] != null) {
           authService.error = response.data['email'][0].toString();
-          print(response.data['email'][0].toString());
+
           setState(() {
             isLoading = false;
           });
@@ -60,7 +61,22 @@ class _SignUpState extends State<SignUp> {
           }
         }
       } catch (e) {
-        print(e);
+        setState(() {
+          isLoading = false;
+        });
+        await NAlertDialog(
+          dismissable: false,
+          dialogStyle: DialogStyle(titleDivider: true),
+          title: Text("Opps Something Went Worng!"),
+          content: Text("Please check your connectivity and try Again.."),
+          actions: <Widget>[
+            TextButton(
+                child: Text("Ok"),
+                onPressed: () {
+                  Navigator.pop(context);
+                }),
+          ],
+        ).show(context);
       }
       // await authService
       //     .signUpWithEmailAndPass(emailTextEditingController.text,

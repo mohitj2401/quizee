@@ -22,6 +22,7 @@ class PlayQuiz extends StatefulWidget {
 }
 
 Map userResultMap = {};
+int total = 0, _correct = 0, _incorrect = 0, _notAttempted = 0;
 
 class _PlayQuizState extends State<PlayQuiz> {
   // DatabaseService databaseService = new DatabaseService();
@@ -72,7 +73,7 @@ class _PlayQuizState extends State<PlayQuiz> {
     }
     String url = apiToken + "/" + widget.quizId;
     Response response = await Dio()
-        .get("http://192.168.137.143/flutter/public/api/question/get/" + url);
+        .get("http://192.168.137.1/flutter/public/api/question/get/" + url);
     return response.data['data'];
   }
 
@@ -96,6 +97,8 @@ class _PlayQuizState extends State<PlayQuiz> {
                 physics: ClampingScrollPhysics(),
                 itemCount: questionSnapshot.length,
                 itemBuilder: (context, index) {
+                  _notAttempted = questionSnapshot.length;
+                  total = questionSnapshot.length;
                   return QuizPlayTile(
                       questionModel: getQuestionModelFromDataSnapshot(
                           questionSnapshot[index]),
@@ -125,26 +128,50 @@ class _PlayQuizState extends State<PlayQuiz> {
 
           try {
             Response response = await Dio().post(
-                "http://192.168.137.143/flutter/public/api/result/get/" +
+                "http://192.168.137.1/flutter/public/api/result/get/" +
                     apiToken,
                 data: {
                   "data1": jsonEncode(userResultList),
                   'quizId': widget.quizId,
+                  'total': total,
+                  'correct': _correct,
+                  'incorrect': _incorrect,
+                  'notAttempted': _notAttempted,
                 });
+            userResultMap = {};
+            total = 0;
+            _correct = 0;
+            _incorrect = 0;
+            _notAttempted = 0;
             if (response.data['status'] == '200') {
+              userResultList = [];
+
               progressDialog.dismiss();
-              NDialog(
+              NAlertDialog(
+                dismissable: false,
                 dialogStyle: DialogStyle(),
                 title: Text("Your Quiz is Completed"),
               ).show(context);
-              await Future.delayed(Duration(seconds: 5));
+              await Future.delayed(Duration(seconds: 2));
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => Home()),
-                  (route) => true);
+                  (route) => false);
             }
           } catch (e) {
-            print(e);
+            await NAlertDialog(
+              dismissable: false,
+              dialogStyle: DialogStyle(titleDivider: true),
+              title: Text("Opps Something Went Worng!"),
+              content: Text("Please check your connectivity and try Again.."),
+              actions: <Widget>[
+                TextButton(
+                    child: Text("Ok"),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    }),
+              ],
+            ).show(context);
           }
         },
       ),
@@ -181,20 +208,40 @@ class _QuizPlayTileState extends State<QuizPlayTile> {
             userResultMap.addAll({
               widget.questionModel.questionId: widget.questionModel.option1,
             });
+            if (widget.questionModel.answred) {
+              if (widget.questionModel.option1 ==
+                  widget.questionModel.correctOption) {
+                optionSelected = widget.questionModel.option1;
 
-            if (widget.questionModel.option1 ==
-                widget.questionModel.correctOption) {
-              optionSelected = widget.questionModel.option1;
-              widget.questionModel.answred = true;
-              // _correct = _correct + 1;
-              // _notAttempted = _notAttempted + 1;
-              setState(() {});
+                _correct = _correct + 1;
+                _incorrect = _incorrect - 1;
+
+                setState(() {});
+              } else {
+                optionSelected = widget.questionModel.option1;
+
+                _incorrect = _incorrect + 1;
+                _correct = _correct - 1;
+
+                setState(() {});
+              }
             } else {
-              optionSelected = widget.questionModel.option1;
-              widget.questionModel.answred = true;
-              // _incorrect = _incorrect + 1;
-              // _notAttempted = _notAttempted + 1;
-              setState(() {});
+              if (widget.questionModel.option1 ==
+                  widget.questionModel.correctOption) {
+                optionSelected = widget.questionModel.option1;
+                widget.questionModel.answred = true;
+                _correct = _correct + 1;
+                _notAttempted = _notAttempted - 1;
+
+                setState(() {});
+              } else {
+                optionSelected = widget.questionModel.option1;
+                widget.questionModel.answred = true;
+                _incorrect = _incorrect + 1;
+                _notAttempted = _notAttempted - 1;
+
+                setState(() {});
+              }
             }
           },
           child: QuestionTile(
@@ -208,19 +255,42 @@ class _QuizPlayTileState extends State<QuizPlayTile> {
         GestureDetector(
           onTap: () {
             userResultMap.addAll({
-              widget.questionModel.questionId: widget.questionModel.option1,
+              widget.questionModel.questionId: widget.questionModel.option2,
             });
-            if (widget.questionModel.option2 ==
-                widget.questionModel.correctOption) {
-              optionSelected = widget.questionModel.option2;
-              widget.questionModel.answred = true;
+            if (widget.questionModel.answred) {
+              if (widget.questionModel.option2 ==
+                  widget.questionModel.correctOption) {
+                optionSelected = widget.questionModel.option2;
 
-              setState(() {});
+                _correct = _correct + 1;
+                _incorrect = _incorrect - 1;
+
+                setState(() {});
+              } else {
+                optionSelected = widget.questionModel.option2;
+
+                _incorrect = _incorrect + 1;
+                _correct = _correct - 1;
+
+                setState(() {});
+              }
             } else {
-              optionSelected = widget.questionModel.option2;
-              widget.questionModel.answred = true;
+              if (widget.questionModel.option2 ==
+                  widget.questionModel.correctOption) {
+                optionSelected = widget.questionModel.option2;
+                widget.questionModel.answred = true;
+                _correct = _correct + 1;
+                _notAttempted = _notAttempted - 1;
 
-              setState(() {});
+                setState(() {});
+              } else {
+                optionSelected = widget.questionModel.option2;
+                widget.questionModel.answred = true;
+                _incorrect = _incorrect + 1;
+                _notAttempted = _notAttempted - 1;
+
+                setState(() {});
+              }
             }
           },
           child: QuestionTile(
@@ -234,19 +304,42 @@ class _QuizPlayTileState extends State<QuizPlayTile> {
         GestureDetector(
           onTap: () {
             userResultMap.addAll({
-              widget.questionModel.questionId: widget.questionModel.option1,
+              widget.questionModel.questionId: widget.questionModel.option3,
             });
-            if (widget.questionModel.option3 ==
-                widget.questionModel.correctOption) {
-              optionSelected = widget.questionModel.option3;
-              widget.questionModel.answred = true;
+            if (widget.questionModel.answred) {
+              if (widget.questionModel.option3 ==
+                  widget.questionModel.correctOption) {
+                optionSelected = widget.questionModel.option3;
 
-              setState(() {});
+                _correct = _correct + 1;
+                _incorrect = _incorrect - 1;
+
+                setState(() {});
+              } else {
+                optionSelected = widget.questionModel.option3;
+
+                _incorrect = _incorrect + 1;
+                _correct = _correct - 1;
+
+                setState(() {});
+              }
             } else {
-              optionSelected = widget.questionModel.option3;
-              widget.questionModel.answred = true;
+              if (widget.questionModel.option3 ==
+                  widget.questionModel.correctOption) {
+                optionSelected = widget.questionModel.option3;
+                widget.questionModel.answred = true;
+                _correct = _correct + 1;
+                _notAttempted = _notAttempted - 1;
 
-              setState(() {});
+                setState(() {});
+              } else {
+                optionSelected = widget.questionModel.option3;
+                widget.questionModel.answred = true;
+                _incorrect = _incorrect + 1;
+                _notAttempted = _notAttempted - 1;
+
+                setState(() {});
+              }
             }
           },
           child: QuestionTile(
@@ -260,19 +353,42 @@ class _QuizPlayTileState extends State<QuizPlayTile> {
         GestureDetector(
           onTap: () {
             userResultMap.addAll({
-              widget.questionModel.questionId: widget.questionModel.option1,
+              widget.questionModel.questionId: widget.questionModel.option4,
             });
-            if (widget.questionModel.option4 ==
-                widget.questionModel.correctOption) {
-              optionSelected = widget.questionModel.option4;
-              widget.questionModel.answred = true;
+            if (widget.questionModel.answred) {
+              if (widget.questionModel.option4 ==
+                  widget.questionModel.correctOption) {
+                optionSelected = widget.questionModel.option4;
 
-              setState(() {});
+                _correct = _correct + 1;
+                _incorrect = _incorrect - 1;
+
+                setState(() {});
+              } else {
+                optionSelected = widget.questionModel.option4;
+
+                _incorrect = _incorrect + 1;
+                _correct = _correct - 1;
+
+                setState(() {});
+              }
             } else {
-              optionSelected = widget.questionModel.option4;
-              widget.questionModel.answred = true;
+              if (widget.questionModel.option4 ==
+                  widget.questionModel.correctOption) {
+                optionSelected = widget.questionModel.option4;
+                widget.questionModel.answred = true;
+                _correct = _correct + 1;
+                _notAttempted = _notAttempted - 1;
 
-              setState(() {});
+                setState(() {});
+              } else {
+                optionSelected = widget.questionModel.option4;
+                widget.questionModel.answred = true;
+                _incorrect = _incorrect + 1;
+                _notAttempted = _notAttempted - 1;
+
+                setState(() {});
+              }
             }
           },
           child: QuestionTile(

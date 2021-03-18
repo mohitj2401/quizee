@@ -18,22 +18,8 @@ String api_token;
 class _HomeState extends State<Home> {
   StreamController _quizcontroller;
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
-  // bool _connected = false;
-  static String userRole;
 
-  // checkstatus() async {
-  //   var connectivityResult = await (Connectivity().checkConnectivity());
-  //   if (connectivityResult == ConnectivityResult.mobile ||
-  //       connectivityResult == ConnectivityResult.wifi) {
-  //     setState(() {
-  //       _connected = true;
-  //     });
-  //   } else {
-  //     setState(() {
-  //       _connected = false;
-  //     });
-  //   }
-  // }
+  static String userRole;
 
   Widget quizList() {
     return Container(
@@ -76,6 +62,10 @@ class _HomeState extends State<Home> {
               child: Text('No Quiz Available or refresh'),
             );
           }
+          return Container(
+            alignment: Alignment.center,
+            child: Text('No Quiz Available or refresh'),
+          );
         },
       ),
     );
@@ -112,7 +102,7 @@ class _HomeState extends State<Home> {
       });
 
       String url =
-          "http://192.168.137.143/flutter/public/api/quiz/get/" + api_token;
+          "http://192.168.137.1/flutter/public/api/quiz/get/" + api_token;
 
       try {
         Response response = await Dio().get(url);
@@ -130,9 +120,20 @@ class _HomeState extends State<Home> {
         }
       } catch (e) {
         print(e);
+        await NAlertDialog(
+          dismissable: false,
+          dialogStyle: DialogStyle(titleDivider: true),
+          title: Text("Opps Something Went Worng!"),
+          content: Text("Please check your connectivity and try Again.."),
+          actions: <Widget>[
+            TextButton(
+                child: Text("Ok"),
+                onPressed: () {
+                  Navigator.pop(context);
+                }),
+          ],
+        ).show(context);
       }
-
-      // quizStream = await databaseService.getQuizData(user.uid);
     } else {
       await HelperFunctions.saveUserRole("");
       await HelperFunctions.saveUserLoggedIn(false);
@@ -147,13 +148,6 @@ class _HomeState extends State<Home> {
       return res;
     });
   }
-
-  // showSnack() {
-  //   return ScaffoldMessenger(
-  //     key: scaffoldKey,
-  //     child: Text('New content loaded'),
-  //   );
-  // }
 
   Future<Null> _handleRefresh() async {
     ProgressDialog progressDialog =
@@ -253,14 +247,14 @@ class QuizTile extends StatelessWidget {
                     onPressed: () async {
                       try {
                         Response response = await Dio().post(
-                          "http://192.168.137.143/flutter/public/api/quiz/delete/" +
+                          "http://192.168.137.1/flutter/public/api/quiz/delete/" +
                               api_token +
                               '/' +
                               quizId,
                         );
 
                         // print(response.data['email']);
-                        print(response);
+
                         if (response.data['email'] != null) {
                           print(response.data['email'][0].toString());
                         } else {
@@ -280,6 +274,20 @@ class QuizTile extends StatelessWidget {
                         }
                       } catch (e) {
                         print(e);
+                        await NAlertDialog(
+                          dismissable: false,
+                          dialogStyle: DialogStyle(titleDivider: true),
+                          title: Text("Opps Something Went Worng!"),
+                          content: Text(
+                              "Please check your connectivity and try Again.."),
+                          actions: <Widget>[
+                            TextButton(
+                                child: Text("Ok"),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                }),
+                          ],
+                        ).show(context);
                       }
                     }),
                 TextButton(
@@ -293,12 +301,14 @@ class QuizTile extends StatelessWidget {
         }
       },
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PlayQuiz(quizId),
-          ),
-        );
+        if (userRole == "student") {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PlayQuiz(quizId),
+            ),
+          );
+        }
       },
       child: Container(
         height: 150,
@@ -308,7 +318,7 @@ class QuizTile extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: Image.network(
-                "http://192.168.137.143/flutter/storage/app/public/" + imgUrl,
+                "http://192.168.137.1/flutter/storage/app/public/" + imgUrl,
                 width: MediaQuery.of(context).size.width - 48,
                 fit: BoxFit.cover,
               ),
