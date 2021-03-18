@@ -83,8 +83,12 @@ class _HomeState extends State<Home> {
 
   storeapi() async {
     api_token = await HelperFunctions.getUserApiKey();
-    if (api_token == '') {
+    if (api_token == '' || api_token == null) {
+      await HelperFunctions.saveUserRole("");
       await HelperFunctions.saveUserLoggedIn(false);
+      await HelperFunctions.saveUserApiKey("");
+      Navigator.pushAndRemoveUntil(context,
+          MaterialPageRoute(builder: (context) => SignIn()), (route) => false);
     }
   }
 
@@ -108,7 +112,7 @@ class _HomeState extends State<Home> {
       });
 
       String url =
-          "http://192.168.43.109/flutter/public/api/quiz/get/" + api_token;
+          "http://192.168.137.143/flutter/public/api/quiz/get/" + api_token;
 
       try {
         Response response = await Dio().get(url);
@@ -249,7 +253,7 @@ class QuizTile extends StatelessWidget {
                     onPressed: () async {
                       try {
                         Response response = await Dio().post(
-                          "http://192.168.43.109/flutter/public/api/quiz/delete/" +
+                          "http://192.168.137.143/flutter/public/api/quiz/delete/" +
                               api_token +
                               '/' +
                               quizId,
@@ -304,7 +308,7 @@ class QuizTile extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: Image.network(
-                "http://192.168.43.109/flutter/storage/app/public/" + imgUrl,
+                "http://192.168.137.143/flutter/storage/app/public/" + imgUrl,
                 width: MediaQuery.of(context).size.width - 48,
                 fit: BoxFit.cover,
               ),

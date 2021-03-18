@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:athena/helper/helper.dart';
 import 'package:athena/models/questions.dart';
-
+import 'package:athena/views/home.dart';
+import 'package:ndialog/ndialog.dart';
 // import 'package:athena/service/database.dart';
 import 'package:athena/views/quiz_play_widget.dart';
+import 'package:athena/views/signin.dart';
 // import 'package:athena/views/result.dart';
 import 'package:athena/widget/widget.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';
@@ -18,10 +22,10 @@ class PlayQuiz extends StatefulWidget {
 }
 
 Map userResultMap = {};
-String api_token;
 
 class _PlayQuizState extends State<PlayQuiz> {
   // DatabaseService databaseService = new DatabaseService();
+  String apiToken;
 
   List questionSnapshot;
 
@@ -48,26 +52,35 @@ class _PlayQuizState extends State<PlayQuiz> {
 
   @override
   void initState() {
-    storeapi();
-    getdata();
+    loadQuestions();
     super.initState();
   }
 
-  storeapi() async {
-    api_token = await HelperFunctions.getUserApiKey();
-    if (api_token == '') {
+  getdata() async {
+    await HelperFunctions.getUserApiKey().then((value) {
+      setState(() {
+        apiToken = value;
+      });
+    });
+
+    if (apiToken == '' || apiToken == null) {
+      await HelperFunctions.saveUserRole("");
       await HelperFunctions.saveUserLoggedIn(false);
+      await HelperFunctions.saveUserApiKey("");
+      Navigator.pushAndRemoveUntil(context,
+          MaterialPageRoute(builder: (context) => SignIn()), (route) => false);
     }
+    String url = apiToken + "/" + widget.quizId;
+    Response response = await Dio()
+        .get("http://192.168.137.143/flutter/public/api/question/get/" + url);
+    return response.data['data'];
   }
 
-  getdata() async {
-    Response response = await Dio().get(
-        "http://192.168.43.109/flutter/public/api/question/get/" +
-            api_token +
-            "/" +
-            widget.quizId);
-    setState(() {
-      questionSnapshot = response.data['data'];
+  loadQuestions() async {
+    getdata().then((res) async {
+      setState(() {
+        questionSnapshot = res;
+      });
     });
   }
 
@@ -98,14 +111,41 @@ class _PlayQuizState extends State<PlayQuiz> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.check),
         onPressed: () async {
-          Response response = await Dio().post(
-              "http://192.168.43.109/flutter/public/api/result/get/" +
-                  api_token,
-              data: {
-                "data": userResultMap,
-                'quizId': widget.quizId,
-              });
-          print(response);
+          CustomProgressDialog progressDialog =
+              CustomProgressDialog(context, blur: 10);
+
+          progressDialog.show();
+          List userResultList = [];
+          userResultMap.forEach((key, value) {
+            userResultList.add({
+              'id': key,
+              'answer': value,
+            });
+          });
+
+          try {
+            Response response = await Dio().post(
+                "http://192.168.137.143/flutter/public/api/result/get/" +
+                    apiToken,
+                data: {
+                  "data1": jsonEncode(userResultList),
+                  'quizId': widget.quizId,
+                });
+            if (response.data['status'] == '200') {
+              progressDialog.dismiss();
+              NDialog(
+                dialogStyle: DialogStyle(),
+                title: Text("Your Quiz is Completed"),
+              ).show(context);
+              await Future.delayed(Duration(seconds: 5));
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => Home()),
+                  (route) => true);
+            }
+          } catch (e) {
+            print(e);
+          }
         },
       ),
     );
@@ -168,7 +208,7 @@ class _QuizPlayTileState extends State<QuizPlayTile> {
         GestureDetector(
           onTap: () {
             userResultMap.addAll({
-              widget.questionModel.questionId: widget.questionModel.option2,
+              widget.questionModel.questionId: widget.questionModel.option1,
             });
             if (widget.questionModel.option2 ==
                 widget.questionModel.correctOption) {
@@ -194,7 +234,7 @@ class _QuizPlayTileState extends State<QuizPlayTile> {
         GestureDetector(
           onTap: () {
             userResultMap.addAll({
-              widget.questionModel.questionId: widget.questionModel.option3,
+              widget.questionModel.questionId: widget.questionModel.option1,
             });
             if (widget.questionModel.option3 ==
                 widget.questionModel.correctOption) {
@@ -220,7 +260,7 @@ class _QuizPlayTileState extends State<QuizPlayTile> {
         GestureDetector(
           onTap: () {
             userResultMap.addAll({
-              widget.questionModel.questionId: widget.questionModel.option4,
+              widget.questionModel.questionId: widget.questionModel.option1,
             });
             if (widget.questionModel.option4 ==
                 widget.questionModel.correctOption) {

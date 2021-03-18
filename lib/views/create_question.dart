@@ -46,7 +46,7 @@ class _CreateQuestionsState extends State<CreateQuestions> {
         });
 
         Response response = await Dio().post(
-            "http://192.168.43.109/flutter/public/api/question/create/1610699043LzzFWZHFKbaiatVLjO6kYvaWBJ6zFg/" +
+            "http://192.168.137.143/flutter/public/api/question/create/1610699043LzzFWZHFKbaiatVLjO6kYvaWBJ6zFg/" +
                 widget.quizId,
             data: formData);
 

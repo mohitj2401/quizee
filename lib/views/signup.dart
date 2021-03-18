@@ -31,13 +31,13 @@ class _SignUpState extends State<SignUp> {
       });
       try {
         Response response = await Dio()
-            .post("http://192.168.43.109/flutter/public/api/register", data: {
+            .post("http://192.168.137.143/flutter/public/api/register", data: {
           "name": nameTextEditingController.text,
           "email": emailTextEditingController.text,
-          "role": "admin",
+          "role": "student",
           'password': passwordTextEditingController.text,
         });
-
+        print(response);
         if (response.data['email'] != null) {
           authService.error = response.data['email'][0].toString();
           print(response.data['email'][0].toString());
