@@ -32,7 +32,7 @@ class _SignUpState extends State<SignUp> {
       });
       try {
         Response response = await Dio()
-            .post("http://192.168.137.1/flutter/public/api/register", data: {
+            .post("http://192.168.137.74/flutter/public/api/register", data: {
           "name": nameTextEditingController.text,
           "email": emailTextEditingController.text,
           "role": "student",
@@ -54,6 +54,25 @@ class _SignUpState extends State<SignUp> {
             setState(() {
               isLoading = false;
             });
+            Navigator
+                .pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => SignIn()),
+                    (route) =>
+                        false).whenComplete(() async => await NAlertDialog(
+                  dismissable: false,
+                  dialogStyle: DialogStyle(titleDivider: true),
+                  title: Text("Opps Something Went Worng!"),
+                  content:
+                      Text("Please check your connectivity and try Again.."),
+                  actions: <Widget>[
+                    TextButton(
+                        child: Text("Ok"),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        }),
+                  ],
+                ).show(context));
           } else {
             setState(() {
               isLoading = false;
@@ -203,7 +222,7 @@ class _SignUpState extends State<SignUp> {
                                 borderRadius: BorderRadius.circular(30),
                               ),
                               child: Text(
-                                "Sign In",
+                                "Sign Up",
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 17),
                               ),

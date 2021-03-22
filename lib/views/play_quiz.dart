@@ -73,7 +73,7 @@ class _PlayQuizState extends State<PlayQuiz> {
     }
     String url = apiToken + "/" + widget.quizId;
     Response response = await Dio()
-        .get("http://192.168.137.1/flutter/public/api/question/get/" + url);
+        .get("http://192.168.137.74/flutter/public/api/question/get/" + url);
     return response.data['data'];
   }
 
@@ -128,7 +128,7 @@ class _PlayQuizState extends State<PlayQuiz> {
 
           try {
             Response response = await Dio().post(
-                "http://192.168.137.1/flutter/public/api/result/get/" +
+                "http://192.168.137.74/flutter/public/api/result/get/" +
                     apiToken,
                 data: {
                   "data1": jsonEncode(userResultList),
@@ -148,6 +148,7 @@ class _PlayQuizState extends State<PlayQuiz> {
 
               progressDialog.dismiss();
               NAlertDialog(
+                blur: 10,
                 dismissable: false,
                 dialogStyle: DialogStyle(),
                 title: Text("Your Quiz is Completed"),
@@ -157,6 +158,8 @@ class _PlayQuizState extends State<PlayQuiz> {
                   context,
                   MaterialPageRoute(builder: (context) => Home()),
                   (route) => false);
+            } else {
+              // print(response);
             }
           } catch (e) {
             await NAlertDialog(

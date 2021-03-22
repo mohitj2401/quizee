@@ -102,11 +102,11 @@ class _HomeState extends State<Home> {
       });
 
       String url =
-          "http://192.168.137.1/flutter/public/api/quiz/get/" + api_token;
+          "http://192.168.137.74/flutter/public/api/quiz/get/" + api_token;
 
       try {
         Response response = await Dio().get(url);
-        // print(response.data['email']);
+        // print(response);
         // authService.error = null;
 
         if (response.data['email'] != null) {
@@ -204,7 +204,7 @@ class _HomeState extends State<Home> {
         body: Container(
           child: quizList(),
         ),
-        floatingActionButton: userRole != "student"
+        floatingActionButton: userRole != "Student"
             ? FloatingActionButton(
                 child: Icon(Icons.add),
                 onPressed: () {
@@ -236,7 +236,7 @@ class QuizTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onLongPress: () async {
-        if (userRole != "student") {
+        if (userRole != "Student") {
           await DialogBackground(
             dialog: AlertDialog(
               title: Text("Delete Quiz"),
@@ -247,7 +247,7 @@ class QuizTile extends StatelessWidget {
                     onPressed: () async {
                       try {
                         Response response = await Dio().post(
-                          "http://192.168.137.1/flutter/public/api/quiz/delete/" +
+                          "http://192.168.137.74/flutter/public/api/quiz/delete/" +
                               api_token +
                               '/' +
                               quizId,
@@ -301,7 +301,7 @@ class QuizTile extends StatelessWidget {
         }
       },
       onTap: () {
-        if (userRole == "student") {
+        if (userRole == "Student") {
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -318,7 +318,7 @@ class QuizTile extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: Image.network(
-                "http://192.168.137.1/flutter/storage/app/public/" + imgUrl,
+                "http://192.168.137.74/flutter/storage/app/public/" + imgUrl,
                 width: MediaQuery.of(context).size.width - 48,
                 fit: BoxFit.cover,
               ),
