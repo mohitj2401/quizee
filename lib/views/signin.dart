@@ -1,9 +1,7 @@
 import 'package:athena/helper/helper.dart';
 import 'package:athena/service/auth.dart';
-import 'package:athena/service/database.dart';
 import 'package:athena/views/home.dart';
 import 'package:athena/views/signup.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 
 import 'package:flutter/material.dart';
@@ -17,9 +15,8 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
   bool isLoading = false;
   bool showError = false;
+  bool _isHidden = true;
   final formKey = GlobalKey<FormState>();
-  // DatabaseService databaseService = new DatabaseService();
-
   AuthService authService = new AuthService();
   TextEditingController emailTextEditingController = TextEditingController();
   TextEditingController passwordTextEditingController = TextEditingController();
@@ -35,7 +32,6 @@ class _SignInState extends State<SignIn> {
           "email": emailTextEditingController.text,
           'password': passwordTextEditingController.text,
         });
-        // print(response.data['email']);
         authService.error = null;
         if (response.data['email'] != null) {
           authService.error = response.data['email'][0].toString();
@@ -61,7 +57,6 @@ class _SignInState extends State<SignIn> {
           }
         }
       } catch (e) {
-        print(e);
         setState(() {
           isLoading = false;
         });
@@ -79,32 +74,6 @@ class _SignInState extends State<SignIn> {
           ],
         ).show(context);
       }
-      // await authService
-      //     .signInEmailAndPass(emailTextEditingController.text,
-      //         passwordTextEditingController.text)
-      //     .then((value) {
-      //   if (value != null) {
-      //     HelperFunctions.saveUserLoggedIn(true);
-      //     databaseService
-      //         .getUserByUserEmail(emailTextEditingController.text)
-      //         .then((value) {
-      //       setState(() {
-      //         isLoading = false;
-      //       });
-      //       QuerySnapshot snapshotUserInfo = value;
-
-      //       HelperFunctions.saveUserRole(
-      //           snapshotUserInfo.docs[0].data()['role']);
-      //       Navigator.pushReplacement(
-      //           context, MaterialPageRoute(builder: (context) => Home()));
-      //     });
-      //   } else {
-      //     setState(() {
-      //       isLoading = false;
-      //     });
-      //     showError = true;
-      //   }
-      // });
     }
   }
 
@@ -114,7 +83,7 @@ class _SignInState extends State<SignIn> {
       appBar: AppBar(
         title: Center(
             child: Text(
-          "Athena",
+          "Quizie",
           style: TextStyle(color: Colors.blue, fontSize: 24),
         )),
         iconTheme: IconThemeData(color: Colors.black),
@@ -129,8 +98,8 @@ class _SignInState extends State<SignIn> {
             )
           : SingleChildScrollView(
               child: Container(
-                height: MediaQuery.of(context).size.height - 60,
                 child: Form(
+                  autovalidateMode: AutovalidateMode.always,
                   key: formKey,
                   child: Container(
                       margin:
@@ -138,27 +107,34 @@ class _SignInState extends State<SignIn> {
                       child: Column(
                         children: <Widget>[
                           showAlert(),
-                          Spacer(),
+                          SizedBox(
+                            height: 20,
+                          ),
                           TextFormField(
                             validator: (value) {
-                              if (RegExp(
+                              if (value.isEmpty) {
+                                return 'Please enter your email';
+                              }
+                              if (!RegExp(
                                       r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                                   .hasMatch(value)) {
-                                return null;
-                              } else {
-                                return "Enter correct email";
+                                return "Please enter valid email";
                               }
+                              return null;
                             },
                             controller: emailTextEditingController,
                             decoration: InputDecoration(
-                              hintText: "Email",
+                              icon: Icon(
+                                Icons.email_rounded,
+                              ),
+                              labelText: "Email",
                             ),
                           ),
                           SizedBox(
                             height: 8,
                           ),
                           TextFormField(
-                            obscureText: true,
+                            obscureText: _isHidden,
                             validator: (value) {
                               if (value.isEmpty) {
                                 return "Please Enter Password";
@@ -168,7 +144,20 @@ class _SignInState extends State<SignIn> {
                             },
                             controller: passwordTextEditingController,
                             decoration: InputDecoration(
-                              hintText: "Password",
+                              icon: Icon(Icons.lock),
+                              suffix: InkWell(
+                                onTap: _togglePasswordView,
+                                child: Padding(
+                                  padding:
+                                      EdgeInsets.only(left: 8.0, right: 20),
+                                  child: Icon(
+                                    Icons.visibility,
+                                    size: 24,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ),
+                              labelText: "Password",
                             ),
                           ),
                           SizedBox(
@@ -229,6 +218,12 @@ class _SignInState extends State<SignIn> {
               ),
             ),
     );
+  }
+
+  void _togglePasswordView() {
+    setState(() {
+      _isHidden = !_isHidden;
+    });
   }
 
   Widget showAlert() {
