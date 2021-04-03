@@ -44,9 +44,8 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    // checkstatus();
     return MaterialApp(
-        title: 'Athena',
+        title: 'Quizie',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           visualDensity: VisualDensity.adaptivePlatformDensity,
@@ -59,7 +58,7 @@ class _MyAppState extends State<MyApp> {
                 ),
               )
             : _isLoggedIn
-                ? Home()
+                ? Home(message: '')
                 : SignIn());
   }
 }

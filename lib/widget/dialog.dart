@@ -86,7 +86,7 @@ class Dialogs {
             RaisedButton(
               onPressed: () {
                 // authService.signOut();
-                HelperFunctions.saveUserRole("");
+
                 HelperFunctions.saveUserLoggedIn(false);
                 Navigator.pushAndRemoveUntil(
                     context,

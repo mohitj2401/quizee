@@ -73,7 +73,7 @@ class _CreateQuestionsState extends State<CreateQuestions> {
           } else if (response.data['status'] == '404') {
             HelperFunctions.saveUserApiKey('');
             HelperFunctions.saveUserLoggedIn(false);
-            HelperFunctions.saveUserRole('');
+
             Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (context) => SignIn()),

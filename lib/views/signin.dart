@@ -3,6 +3,7 @@ import 'package:athena/service/auth.dart';
 import 'package:athena/views/home.dart';
 import 'package:athena/views/signup.dart';
 import 'package:dio/dio.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 
 import 'package:flutter/material.dart';
 import 'package:ndialog/ndialog.dart';
@@ -28,7 +29,7 @@ class _SignInState extends State<SignIn> {
       });
       try {
         Response response = await Dio()
-            .post("http://192.168.137.74/flutter/public/api/login", data: {
+            .post("http://192.168.137.137/flutter/public/api/login", data: {
           "email": emailTextEditingController.text,
           'password': passwordTextEditingController.text,
         });
@@ -42,10 +43,13 @@ class _SignInState extends State<SignIn> {
         } else {
           if (response.data['status'] == '200') {
             await HelperFunctions.saveUserApiKey(response.data['api_token']);
-            await HelperFunctions.saveUserRole(response.data['role']);
             await HelperFunctions.saveUserLoggedIn(true);
             await Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => Home()));
+                context,
+                MaterialPageRoute(
+                    builder: (context) => Home(
+                          message: 'Login successfully',
+                        )));
             setState(() {
               isLoading = false;
             });
@@ -107,9 +111,23 @@ class _SignInState extends State<SignIn> {
                       child: Column(
                         children: <Widget>[
                           showAlert(),
-                          SizedBox(
-                            height: 20,
+                          SizedBox(height: 20),
+                          AnimatedTextKit(
+                            animatedTexts: [
+                              TypewriterAnimatedText(
+                                'Hello There!',
+                                textStyle: TextStyle(
+                                  fontSize: 35,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey,
+                                ),
+                                speed: Duration(milliseconds: 100),
+                              ),
+                            ],
+                            pause: Duration(milliseconds: 500),
+                            displayFullTextOnTap: true,
                           ),
+                          SizedBox(height: 50),
                           TextFormField(
                             validator: (value) {
                               if (value.isEmpty) {
@@ -153,7 +171,8 @@ class _SignInState extends State<SignIn> {
                                   child: Icon(
                                     Icons.visibility,
                                     size: 24,
-                                    color: Colors.grey,
+                                    color:
+                                        _isHidden ? Colors.grey : Colors.black,
                                   ),
                                 ),
                               ),

@@ -65,7 +65,6 @@ class _PlayQuizState extends State<PlayQuiz> {
     });
 
     if (apiToken == '' || apiToken == null) {
-      await HelperFunctions.saveUserRole("");
       await HelperFunctions.saveUserLoggedIn(false);
       await HelperFunctions.saveUserApiKey("");
       Navigator.pushAndRemoveUntil(context,
@@ -73,7 +72,7 @@ class _PlayQuizState extends State<PlayQuiz> {
     }
     String url = apiToken + "/" + widget.quizId;
     Response response = await Dio()
-        .get("http://192.168.137.74/flutter/public/api/question/get/" + url);
+        .get("http://192.168.137.1/flutter/public/api/question/get/" + url);
     return response.data['data'];
   }
 
@@ -128,7 +127,7 @@ class _PlayQuizState extends State<PlayQuiz> {
 
           try {
             Response response = await Dio().post(
-                "http://192.168.137.74/flutter/public/api/result/get/" +
+                "http://192.168.137.1/flutter/public/api/result/get/" +
                     apiToken,
                 data: {
                   "data1": jsonEncode(userResultList),

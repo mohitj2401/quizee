@@ -31,7 +31,7 @@ Widget appBarMain(BuildContext context) {
                   child: Text("Yes"),
                   onPressed: () async {
                     await HelperFunctions.saveUserApiKey('');
-                    await HelperFunctions.saveUserRole("");
+
                     await HelperFunctions.saveUserLoggedIn(false);
                     await Navigator.pushAndRemoveUntil(
                         context,

@@ -75,7 +75,7 @@ class _CreateQuizState extends State<CreateQuiz> {
             } else if (response.data['status'] == '404') {
               HelperFunctions.saveUserApiKey('');
               HelperFunctions.saveUserLoggedIn(false);
-              HelperFunctions.saveUserRole('');
+
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => SignIn()),

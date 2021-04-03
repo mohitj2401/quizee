@@ -15,19 +15,9 @@ class HelperFunctions {
     prefs.setString(userApiKey, api_token);
   }
 
-  static saveUserRole(String role) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(userRole, role);
-  }
-
   static Future<bool> getUserLoggedIn() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getBool(userLoggedInKey);
-  }
-
-  static Future<String> getUserRole() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(userRole);
   }
 
   static Future<String> getUserApiKey() async {

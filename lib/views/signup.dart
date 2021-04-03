@@ -1,8 +1,11 @@
+import 'package:athena/helper/helper.dart';
 import 'package:athena/service/auth.dart';
+import 'package:athena/views/home.dart';
 import 'package:athena/views/signin.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:ndialog/ndialog.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -27,7 +30,7 @@ class _SignUpState extends State<SignUp> {
       });
       try {
         Response response = await Dio()
-            .post("http://192.168.137.74/flutter/public/api/register", data: {
+            .post("http://192.168.137.1/flutter/public/api/register", data: {
           "name": nameTextEditingController.text,
           "email": emailTextEditingController.text,
           'password': passwordTextEditingController.text,
@@ -41,32 +44,17 @@ class _SignUpState extends State<SignUp> {
           });
         } else {
           if (response.data['status'] == '200') {
-            authService.error = response.data['msg'];
-            nameTextEditingController.text = '';
-            emailTextEditingController.text = '';
-            passwordTextEditingController.text = '';
+            await HelperFunctions.saveUserApiKey(response.data['api_token']);
+            await HelperFunctions.saveUserLoggedIn(true);
+            await Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        Home(message: 'Resgiter Successfully')));
+
             setState(() {
               isLoading = false;
             });
-            Navigator
-                .pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => SignIn()),
-                    (route) =>
-                        false).whenComplete(() async => await NAlertDialog(
-                  dismissable: false,
-                  dialogStyle: DialogStyle(titleDivider: true),
-                  title: Text("Opps Something Went Worng!"),
-                  content:
-                      Text("Please check your connectivity and try Again.."),
-                  actions: <Widget>[
-                    TextButton(
-                        child: Text("Ok"),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        }),
-                  ],
-                ).show(context));
           } else {
             setState(() {
               isLoading = false;
@@ -74,6 +62,7 @@ class _SignUpState extends State<SignUp> {
           }
         }
       } catch (e) {
+        print(e);
         setState(() {
           isLoading = false;
         });
@@ -123,6 +112,24 @@ class _SignUpState extends State<SignUp> {
                     child: Column(
                       children: <Widget>[
                         showAlert(),
+                        SizedBox(height: 20),
+                        AnimatedTextKit(
+                          animatedTexts: [
+                            TypewriterAnimatedText(
+                              'Welcome to Quizie!',
+                              textStyle: TextStyle(
+                                fontSize: 35,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey,
+                              ),
+                              speed: Duration(milliseconds: 100),
+                            ),
+                          ],
+                          isRepeatingAnimation: true,
+                          pause: Duration(milliseconds: 500),
+                          displayFullTextOnTap: true,
+                        ),
+                        SizedBox(height: 50),
                         TextFormField(
                           validator: (value) {
                             if (value.isEmpty) {
@@ -194,7 +201,7 @@ class _SignUpState extends State<SignUp> {
                                 ),
                               ),
                             ),
-                            hintText: "Password",
+                            labelText: "Password",
                           ),
                         ),
                         SizedBox(
