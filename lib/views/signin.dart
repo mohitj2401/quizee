@@ -2,6 +2,7 @@ import 'package:athena/helper/helper.dart';
 import 'package:athena/service/auth.dart';
 import 'package:athena/views/home.dart';
 import 'package:athena/views/signup.dart';
+import 'package:athena/views/subjects.dart';
 import 'package:dio/dio.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 
@@ -47,7 +48,7 @@ class _SignInState extends State<SignIn> {
             await Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => Home(
+                    builder: (context) => Subjects(
                           message: 'Login successfully',
                         )));
             setState(() {

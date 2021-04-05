@@ -2,6 +2,7 @@ import 'package:athena/helper/helper.dart';
 import 'package:athena/service/auth.dart';
 import 'package:athena/views/home.dart';
 import 'package:athena/views/signin.dart';
+import 'package:athena/views/subjects.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:ndialog/ndialog.dart';
@@ -50,7 +51,7 @@ class _SignUpState extends State<SignUp> {
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                        Home(message: 'Resgiter Successfully')));
+                        Subjects(message: 'Resgiter Successfully')));
 
             setState(() {
               isLoading = false;

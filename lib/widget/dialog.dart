@@ -1,6 +1,5 @@
 import 'package:athena/helper/helper.dart';
 import 'package:athena/service/auth.dart';
-import 'package:athena/service/database.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 
@@ -38,12 +37,7 @@ class Dialogs {
                     "http://192.168.43.109/flutter/public/api/quiz/delete/1610699043LzzFWZHFKbaiatVLjO6kYvaWBJ6zFg/" +
                         quizId,
                   );
-
-                  // print(response.data['email']);
-                  print(response);
-                } catch (e) {
-                  print(e);
-                }
+                } catch (e) {}
                 newful();
                 Navigator.of(context).pop(DialogAction.yes);
               },

@@ -1,6 +1,7 @@
 import 'package:athena/helper/helper.dart';
 import 'package:athena/views/home.dart';
 import 'package:athena/views/signin.dart';
+import 'package:athena/views/subjects.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -45,20 +46,21 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Quizie',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
-        home: isLoading
-            ? Container(
-                color: Colors.white,
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              )
-            : _isLoggedIn
-                ? Home(message: '')
-                : SignIn());
+      title: 'Quizie',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      home: isLoading
+          ? Container(
+              color: Colors.white,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            )
+          : _isLoggedIn
+              ? Subjects()
+              : SignIn(),
+    );
   }
 }

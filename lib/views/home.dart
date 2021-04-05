@@ -8,8 +8,8 @@ import 'package:dio/dio.dart';
 import 'package:ndialog/ndialog.dart';
 
 class Home extends StatefulWidget {
-  final String message;
-  Home({@required this.message});
+  final int subject_id;
+  Home({@required this.subject_id});
   @override
   _HomeState createState() => _HomeState();
 }
@@ -82,12 +82,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     storeapi();
-    if (widget.message != '' && !notified) {
-      Future(() {
-        final snackBar = SnackBar(content: Text(widget.message));
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      });
-    }
+
     _quizcontroller = StreamController();
 
     loadPosts();
@@ -98,8 +93,10 @@ class _HomeState extends State<Home> {
   getData() async {
     var api = await HelperFunctions.getUserApiKey();
     if (api != null || api != '') {
-      String url =
-          "http://192.168.137.1/flutter/public/api/quiz/get/" + api_token;
+      String url = "http://192.168.137.1/flutter/public/api/quiz/get/" +
+          widget.subject_id.toString() +
+          '/' +
+          api_token;
 
       try {
         Response response = await Dio().get(url);
@@ -164,41 +161,29 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // drawer: appDrawer(context),
-        appBar: AppBar(
-          title: Center(
-              child: Text(
-            "Quizie",
-            style: TextStyle(color: Colors.blue, fontSize: 24),
-          )),
-          iconTheme: IconThemeData(color: Colors.black),
-          backgroundColor: Colors.transparent,
-          elevation: 0.0,
-          actions: <Widget>[
-            IconButton(
-              tooltip: 'Refresh',
-              icon: Icon(Icons.refresh),
-              onPressed: _handleRefresh,
-            ),
-            GestureDetector(
-              onTap: () async {
-                await HelperFunctions.saveUserLoggedIn(false);
-                await HelperFunctions.saveUserApiKey("");
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => SignIn()),
-                    (route) => false);
-              },
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: Icon(Icons.exit_to_app),
-              ),
-            ),
-          ],
-        ),
-        body: Container(
-          child: quizList(),
-        ));
+      // drawer: appDrawer(context),
+      appBar: AppBar(
+        title: Center(
+            child: Text(
+          "Quizie",
+          style: TextStyle(color: Colors.blue, fontSize: 24),
+        )),
+        iconTheme: IconThemeData(color: Colors.black),
+        backgroundColor: Colors.transparent,
+        elevation: 0.0,
+        actions: <Widget>[
+          IconButton(
+            tooltip: 'Refresh',
+            icon: Icon(Icons.refresh),
+            onPressed: _handleRefresh,
+          ),
+        ],
+      ),
+
+      body: Container(
+        child: quizList(),
+      ),
+    );
   }
 }
 
