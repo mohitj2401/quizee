@@ -1,10 +1,9 @@
 import 'package:athena/helper/helper.dart';
-import 'package:athena/views/home.dart';
 import 'package:athena/views/signin.dart';
 import 'package:athena/views/subjects.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
   runApp(MyApp());
 }
 
@@ -58,7 +57,9 @@ class _MyAppState extends State<MyApp> {
               ),
             )
           : _isLoggedIn
-              ? Subjects()
+              ? Subjects(
+                  message: '',
+                )
               : SignIn(),
     );
   }

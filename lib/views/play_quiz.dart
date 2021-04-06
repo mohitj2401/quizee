@@ -122,7 +122,7 @@ class _PlayQuizState extends State<PlayQuiz> {
 
           try {
             Response response = await Dio().post(
-                "http://192.168.137.1/flutter/public/api/result/get/" +
+                "http://192.168.137.1/flutter/public/api/result/store/" +
                     apiToken,
                 data: {
                   "data1": jsonEncode(userResultList),

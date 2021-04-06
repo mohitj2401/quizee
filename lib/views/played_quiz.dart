@@ -1,23 +1,23 @@
+import 'dart:io';
+
 import 'package:athena/helper/helper.dart';
-import 'package:athena/views/home.dart';
-import 'package:athena/views/played_quiz.dart';
+
 import 'package:athena/views/signin.dart';
 import 'package:dio/dio.dart';
+import 'package:downloads_path_provider_28/downloads_path_provider_28.dart';
 import 'package:flutter/material.dart';
 import 'package:ndialog/ndialog.dart';
+import 'package:permission_handler/permission_handler.dart';
 
-class Subjects extends StatefulWidget {
-  final String message;
-
-  Subjects({@required this.message});
+class PlayedQuiz extends StatefulWidget {
   @override
-  _SubjectsState createState() => _SubjectsState();
+  _PlayedQuizState createState() => _PlayedQuizState();
 }
 
-class _SubjectsState extends State<Subjects> {
+class _PlayedQuizState extends State<PlayedQuiz> {
   TextEditingController searchSubject = TextEditingController();
-  List subjectsGet = [];
-  bool notified = false;
+  List PlayedQuizGet = [];
+
   String api_token;
 
   Future getDataFun;
@@ -36,12 +36,6 @@ class _SubjectsState extends State<Subjects> {
   @override
   void initState() {
     storeapi();
-    if (widget.message != '' && !notified) {
-      Future(() {
-        final snackBar = SnackBar(content: Text(widget.message));
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      });
-    }
     getDataFun = getData();
     super.initState();
   }
@@ -50,7 +44,7 @@ class _SubjectsState extends State<Subjects> {
     var api = await HelperFunctions.getUserApiKey();
     if (api != null || api != '') {
       String url =
-          "http://192.168.137.1/flutter/public/api/subjects/get/" + api_token;
+          "http://192.168.137.1/flutter/public/api/result/getquiz/" + api_token;
 
       try {
         Response response = await Dio().get(url);
@@ -66,6 +60,7 @@ class _SubjectsState extends State<Subjects> {
               (route) => false);
         }
       } catch (e) {
+        print(e);
         await NAlertDialog(
           dismissable: false,
           dialogStyle: DialogStyle(titleDivider: true),
@@ -126,7 +121,7 @@ class _SubjectsState extends State<Subjects> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Subjects',
+          'Results',
           style: TextStyle(color: Colors.blueAccent, fontSize: 22),
         ),
         iconTheme: IconThemeData(color: Colors.black),
@@ -158,7 +153,7 @@ class _SubjectsState extends State<Subjects> {
                           Navigator.pop(context);
 
                           String url =
-                              "http://192.168.137.1/flutter/public/api/subjects/search/" +
+                              "http://192.168.137.1/flutter/public/api/result/search/" +
                                   api_token +
                                   '/' +
                                   searchSubject.text;
@@ -194,16 +189,13 @@ class _SubjectsState extends State<Subjects> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
+        currentIndex: 1,
         showSelectedLabels: false,
         showUnselectedLabels: false,
         onTap: (index) async {
           if (index == 2) {}
           if (index == 0) {}
-          if (index == 1) {
-            Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => PlayedQuiz()));
-          }
+          if (index == 1) {}
           if (index == 3) {
             ProgressDialog progressDialog =
                 ProgressDialog(context, message: Text("Logging Out"));
@@ -244,16 +236,32 @@ class _SubjectsState extends State<Subjects> {
                       itemCount: subjectsGet.length,
                       itemBuilder: (context, index) {
                         return ListTile(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Home(
-                                        subject_id: subjectsGet[index]['id'])));
+                          onTap: () async {
+                            Future<String> getFilePath(uniqueFileName) async {
+                              String path = '';
+
+                              Directory dir = await DownloadsPathProvider
+                                  .downloadsDirectory;
+
+                              path = '${dir.path}/$uniqueFileName.pdf';
+                              var permi = Permission.storage;
+                              if (!(await permi.isGranted)) {
+                                permi.request();
+                              }
+                              return path;
+                            }
+
+                            String filename = 'test';
+                            String savePath = await getFilePath(filename);
+                            try {
+                              Response response = await Dio().download(
+                                  'http://192.168.137.1/flutter/public/api/download/DPf',
+                                  savePath);
+                            } catch (e) {}
                           },
                           leading: Icon(Icons.subject),
-                          title: Text(subjectsGet[index]['name']),
-                          subtitle: Text(subjectsGet[index]['code']),
+                          title: Text(subjectsGet[index]['title']),
+                          subtitle: Text(subjectsGet[index]['description']),
                           trailing: Icon(
                             Icons.arrow_forward_ios,
                             color: Color(0xFF303030),
