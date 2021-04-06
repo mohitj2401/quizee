@@ -1,13 +1,10 @@
-import 'dart:io';
-
 import 'package:athena/helper/helper.dart';
-
 import 'package:athena/views/signin.dart';
+import 'package:athena/views/subjects.dart';
 import 'package:dio/dio.dart';
-import 'package:downloads_path_provider_28/downloads_path_provider_28.dart';
+import 'package:downloader/downloader.dart';
 import 'package:flutter/material.dart';
 import 'package:ndialog/ndialog.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class PlayedQuiz extends StatefulWidget {
   @override
@@ -15,7 +12,7 @@ class PlayedQuiz extends StatefulWidget {
 }
 
 class _PlayedQuizState extends State<PlayedQuiz> {
-  TextEditingController searchSubject = TextEditingController();
+  TextEditingController searchQuiz = TextEditingController();
   List PlayedQuizGet = [];
 
   String api_token;
@@ -36,6 +33,7 @@ class _PlayedQuizState extends State<PlayedQuiz> {
   @override
   void initState() {
     storeapi();
+    Downloader.getPermission();
     getDataFun = getData();
     super.initState();
   }
@@ -133,7 +131,7 @@ class _PlayedQuizState extends State<PlayedQuiz> {
                 content: Form(
                   key: formKey,
                   child: TextFormField(
-                    controller: searchSubject,
+                    controller: searchQuiz,
                     validator: (value) {
                       if (value.isEmpty) {
                         return 'Please enter subject name';
@@ -141,7 +139,7 @@ class _PlayedQuizState extends State<PlayedQuiz> {
                       return null;
                     },
                     decoration: InputDecoration(
-                      labelText: "Subject Name",
+                      labelText: "Quiz Name",
                     ),
                   ),
                 ),
@@ -156,9 +154,9 @@ class _PlayedQuizState extends State<PlayedQuiz> {
                               "http://192.168.137.1/flutter/public/api/result/search/" +
                                   api_token +
                                   '/' +
-                                  searchSubject.text;
+                                  searchQuiz.text;
                           setState(() {
-                            searchSubject.text = '';
+                            searchQuiz.text = '';
                             getDataFun = updateData(url);
                           });
                         }
@@ -190,11 +188,12 @@ class _PlayedQuizState extends State<PlayedQuiz> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 1,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
         onTap: (index) async {
           if (index == 2) {}
-          if (index == 0) {}
+          if (index == 0) {
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => Subjects(message: '')));
+          }
           if (index == 1) {}
           if (index == 3) {
             ProgressDialog progressDialog =
@@ -237,33 +236,35 @@ class _PlayedQuizState extends State<PlayedQuiz> {
                       itemBuilder: (context, index) {
                         return ListTile(
                           onTap: () async {
-                            Future<String> getFilePath(uniqueFileName) async {
-                              String path = '';
-
-                              Directory dir = await DownloadsPathProvider
-                                  .downloadsDirectory;
-
-                              path = '${dir.path}/$uniqueFileName.pdf';
-                              var permi = Permission.storage;
-                              if (!(await permi.isGranted)) {
-                                permi.request();
-                              }
-                              return path;
-                            }
-
-                            String filename = 'test';
-                            String savePath = await getFilePath(filename);
                             try {
-                              Response response = await Dio().download(
-                                  'http://192.168.137.1/flutter/public/api/download/DPf',
-                                  savePath);
-                            } catch (e) {}
+                              var url =
+                                  "http://192.168.137.1/flutter/public/api/download/result/" +
+                                      api_token +
+                                      '/' +
+                                      subjectsGet[index]['id'].toString();
+                              Downloader.download(
+                                  url,
+                                  subjectsGet[index]['title'] + ' result',
+                                  ".pdf");
+                              Future(() {
+                                final snackBar =
+                                    SnackBar(content: Text('Download Sarted'));
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                              });
+                            } catch (e) {
+                              print(e);
+                              await NDialog(
+                                title: Text(
+                                    "Opps Something Went Worng! or try again after sometime.."),
+                              ).show(context);
+                            }
                           },
                           leading: Icon(Icons.subject),
                           title: Text(subjectsGet[index]['title']),
                           subtitle: Text(subjectsGet[index]['description']),
                           trailing: Icon(
-                            Icons.arrow_forward_ios,
+                            Icons.download_outlined,
                             color: Color(0xFF303030),
                             size: 20,
                           ),

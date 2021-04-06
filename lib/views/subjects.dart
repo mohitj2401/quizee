@@ -195,8 +195,6 @@ class _SubjectsState extends State<Subjects> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
         onTap: (index) async {
           if (index == 2) {}
           if (index == 0) {}
