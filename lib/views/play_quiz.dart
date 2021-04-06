@@ -1,16 +1,11 @@
 import 'dart:convert';
-
 import 'package:athena/helper/helper.dart';
 import 'package:athena/models/questions.dart';
-import 'package:athena/views/home.dart';
+import 'package:athena/views/subjects.dart';
 import 'package:ndialog/ndialog.dart';
-// import 'package:athena/service/database.dart';
 import 'package:athena/views/quiz_play_widget.dart';
 import 'package:athena/views/signin.dart';
-// import 'package:athena/views/result.dart';
 import 'package:athena/widget/widget.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
@@ -155,10 +150,25 @@ class _PlayQuizState extends State<PlayQuiz> {
               await Future.delayed(Duration(seconds: 2));
               Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => Home()),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          Subjects(message: 'Quiz Attempted')),
                   (route) => false);
             } else {
-              // print(response);
+              progressDialog.dismiss();
+              await NAlertDialog(
+                dismissable: false,
+                dialogStyle: DialogStyle(titleDivider: true),
+                title: Text("Opps Something Went Worng!"),
+                content: Text("Please check your connectivity and try Again.."),
+                actions: <Widget>[
+                  TextButton(
+                      child: Text("Ok"),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      }),
+                ],
+              ).show(context);
             }
           } catch (e) {
             await NAlertDialog(

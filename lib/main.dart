@@ -14,7 +14,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  // bool _connected = false;
   bool _isLoggedIn = false;
   bool isLoading = true;
 
