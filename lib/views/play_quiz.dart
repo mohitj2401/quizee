@@ -132,6 +132,7 @@ class _PlayQuizState extends State<PlayQuiz> {
                   'incorrect': _incorrect,
                   'notAttempted': _notAttempted,
                 });
+
             userResultMap = {};
             total = 0;
             _correct = 0;
@@ -156,6 +157,7 @@ class _PlayQuizState extends State<PlayQuiz> {
                   (route) => false);
             } else {
               progressDialog.dismiss();
+
               await NAlertDialog(
                 dismissable: false,
                 dialogStyle: DialogStyle(titleDivider: true),
