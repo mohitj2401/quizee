@@ -41,6 +41,7 @@ class _HomeState extends State<Home> {
                     description: snapshot.data[index]['description'],
                     imgUrl: snapshot.data[index]['image'],
                     quizId: snapshot.data[index]['id'].toString(),
+                    duration: snapshot.data[index]['duration'],
                     func: _handleRefresh,
                   );
                 },
@@ -192,6 +193,7 @@ class QuizTile extends StatelessWidget {
   final String title;
   final String quizId;
   final String description;
+  final int duration;
 
   final Function func;
   QuizTile({
@@ -200,6 +202,7 @@ class QuizTile extends StatelessWidget {
     @required this.description,
     @required this.quizId,
     @required this.func,
+    @required this.duration,
   });
 
   @override
@@ -209,7 +212,7 @@ class QuizTile extends StatelessWidget {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => PlayQuiz(quizId),
+            builder: (context) => PlayQuiz(quizId,duration),
           ),
         );
       },

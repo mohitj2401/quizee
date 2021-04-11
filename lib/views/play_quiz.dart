@@ -13,7 +13,8 @@ import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 
 class PlayQuiz extends StatefulWidget {
   final String quizId;
-  PlayQuiz(this.quizId);
+  final int duration;
+  PlayQuiz(this.quizId, this.duration);
   @override
   _PlayQuizState createState() => _PlayQuizState();
 }
@@ -24,9 +25,10 @@ class _PlayQuizState extends State<PlayQuiz> with WidgetsBindingObserver {
   // DatabaseService databaseService = new DatabaseService();
   get wantKeepAlive => true;
   String apiToken;
-  int alertCount = 3;
+  int alertCount = 2;
   List questionSnapshot;
-  int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 210;
+  int endTime;
+
   QuestionModel getQuestionModelFromDataSnapshot(questionSnapshot) {
     QuestionModel questionModel = new QuestionModel();
     questionModel.question = questionSnapshot['title'];
@@ -51,7 +53,9 @@ class _PlayQuizState extends State<PlayQuiz> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-
+    endTime = DateTime.now().millisecondsSinceEpoch +
+        1000 * 60 * widget.duration +
+        15;
     WidgetsBinding.instance.addObserver(this);
     loadQuestions();
   }
@@ -225,6 +229,9 @@ class _PlayQuizState extends State<PlayQuiz> with WidgetsBindingObserver {
                           ));
                     },
                     onEnd: submitQuiz,
+                  ),
+                  SizedBox(
+                    height: 8,
                   ),
                   Expanded(
                     child: ListView.builder(

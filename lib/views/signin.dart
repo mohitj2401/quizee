@@ -30,10 +30,11 @@ class _SignInState extends State<SignIn> {
       });
       try {
         Response response = await Dio()
-            .post("http://192.168.137.137/flutter/public/api/login", data: {
+            .post("http://192.168.137.1/flutter/public/api/login", data: {
           "email": emailTextEditingController.text,
           'password': passwordTextEditingController.text,
         });
+
         authService.error = null;
         if (response.data['email'] != null) {
           authService.error = response.data['email'][0].toString();
