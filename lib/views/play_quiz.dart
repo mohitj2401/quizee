@@ -2,12 +2,15 @@ import 'dart:convert';
 import 'package:athena/helper/helper.dart';
 import 'package:athena/models/questions.dart';
 import 'package:athena/views/subjects.dart';
+import 'package:flutter_countdown_timer/countdown_timer_controller.dart';
+import 'package:flutter_countdown_timer/current_remaining_time.dart';
 import 'package:ndialog/ndialog.dart';
 import 'package:athena/views/quiz_play_widget.dart';
 import 'package:athena/views/signin.dart';
 import 'package:athena/widget/widget.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 
 class PlayQuiz extends StatefulWidget {
   final String quizId;
@@ -17,14 +20,14 @@ class PlayQuiz extends StatefulWidget {
 }
 
 Map userResultMap = {};
-int total = 0, _correct = 0, _incorrect = 0, _notAttempted = 0;
 
-class _PlayQuizState extends State<PlayQuiz> {
+class _PlayQuizState extends State<PlayQuiz> with WidgetsBindingObserver {
   // DatabaseService databaseService = new DatabaseService();
+  get wantKeepAlive => true;
   String apiToken;
-
+  int alertCount = 3;
   List questionSnapshot;
-
+  int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 210;
   QuestionModel getQuestionModelFromDataSnapshot(questionSnapshot) {
     QuestionModel questionModel = new QuestionModel();
     questionModel.question = questionSnapshot['title'];
@@ -48,8 +51,41 @@ class _PlayQuizState extends State<PlayQuiz> {
 
   @override
   void initState() {
-    loadQuestions();
     super.initState();
+
+    WidgetsBinding.instance.addObserver(this);
+    loadQuestions();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (state == AppLifecycleState.paused) {
+      if (alertCount != 0) {
+        await NAlertDialog(
+          dismissable: false,
+          dialogStyle: DialogStyle(titleDivider: true),
+          title: Text("Abnormal Activity Detected"),
+          content: Text("Remaing Abnormal Activity is $alertCount"),
+          actions: <Widget>[
+            TextButton(
+                child: Text("Ok"),
+                onPressed: () {
+                  Navigator.pop(context);
+                }),
+          ],
+        ).show(context);
+        alertCount--;
+      } else {
+        submitQuiz();
+      }
+    }
   }
 
   getdata() async {
@@ -79,25 +115,132 @@ class _PlayQuizState extends State<PlayQuiz> {
     });
   }
 
+  submitQuiz() async {
+    CustomProgressDialog progressDialog =
+        CustomProgressDialog(context, blur: 10);
+
+    progressDialog.show();
+    List userResultList = [];
+    userResultMap.forEach((key, value) {
+      userResultList.add({
+        'id': key,
+        'answer': value,
+      });
+    });
+
+    try {
+      Response response = await Dio().post(
+          "http://192.168.137.1/flutter/public/api/result/store/" + apiToken,
+          data: {
+            "data1": jsonEncode(userResultList),
+            'quizId': widget.quizId,
+          });
+
+      userResultMap = {};
+
+      if (response.data['status'] == '200') {
+        userResultList = [];
+
+        progressDialog.dismiss();
+        NAlertDialog(
+          blur: 10,
+          dismissable: false,
+          dialogStyle: DialogStyle(),
+          title: Text("Your Quiz is Completed"),
+        ).show(context);
+        await Future.delayed(Duration(seconds: 2));
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Subjects(message: 'Quiz Attempted')),
+            (route) => false);
+      } else {
+        progressDialog.dismiss();
+
+        await NAlertDialog(
+          dismissable: false,
+          dialogStyle: DialogStyle(titleDivider: true),
+          title: Text("Opps Something Went Worng!"),
+          content: Text("Please check your connectivity and try Again.."),
+          actions: <Widget>[
+            TextButton(
+                child: Text("Ok"),
+                onPressed: () {
+                  Navigator.pop(context);
+                }),
+          ],
+        ).show(context);
+      }
+    } catch (e) {
+      await NAlertDialog(
+        dismissable: false,
+        dialogStyle: DialogStyle(titleDivider: true),
+        title: Text("Opps Something Went Worng!"),
+        content: Text("Please check your connectivity and try Again.."),
+        actions: <Widget>[
+          TextButton(
+              child: Text("Ok"),
+              onPressed: () {
+                Navigator.pop(context);
+              }),
+        ],
+      ).show(context);
+    }
+    ;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBarMain(context),
       body: Container(
         child: questionSnapshot != null
-            ? ListView.builder(
-                padding: EdgeInsets.symmetric(horizontal: 24),
-                shrinkWrap: true,
-                physics: ClampingScrollPhysics(),
-                itemCount: questionSnapshot.length,
-                itemBuilder: (context, index) {
-                  _notAttempted = questionSnapshot.length;
-                  total = questionSnapshot.length;
-                  return QuizPlayTile(
-                      questionModel: getQuestionModelFromDataSnapshot(
-                          questionSnapshot[index]),
-                      index: index);
-                },
+            ? Column(
+                children: [
+                  CountdownTimer(
+                    endTime: endTime,
+                    widgetBuilder: (_, CurrentRemainingTime time) {
+                      if (time == null || time.sec < 5 && time.min == null) {
+                        return Text(
+                          'Quiz is going to submit',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 21,
+                          ),
+                        );
+                      }
+                      if (time.sec < 25 && time.min == null) {
+                        return Text(
+                          'Quiz is going to submit after ${time.sec} sec',
+                          style: TextStyle(
+                            color: Colors.orangeAccent,
+                            fontSize: 21,
+                          ),
+                        );
+                      }
+                      return Text(
+                          'Remaning Time:- ${time.min ?? '00'}:${time.sec} ',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 21,
+                          ));
+                    },
+                    onEnd: submitQuiz,
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      padding: EdgeInsets.symmetric(horizontal: 24),
+                      physics: ClampingScrollPhysics(),
+                      itemCount: questionSnapshot.length,
+                      itemBuilder: (context, index) {
+                        return QuizPlayTile(
+                            questionModel: getQuestionModelFromDataSnapshot(
+                                questionSnapshot[index]),
+                            index: index);
+                      },
+                    ),
+                  ),
+                ],
               )
             : Container(
                 child: Center(
@@ -107,87 +250,7 @@ class _PlayQuizState extends State<PlayQuiz> {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.check),
-        onPressed: () async {
-          CustomProgressDialog progressDialog =
-              CustomProgressDialog(context, blur: 10);
-
-          progressDialog.show();
-          List userResultList = [];
-          userResultMap.forEach((key, value) {
-            userResultList.add({
-              'id': key,
-              'answer': value,
-            });
-          });
-
-          try {
-            Response response = await Dio().post(
-                "http://192.168.137.1/flutter/public/api/result/store/" +
-                    apiToken,
-                data: {
-                  "data1": jsonEncode(userResultList),
-                  'quizId': widget.quizId,
-                  'total': total,
-                  'correct': _correct,
-                  'incorrect': _incorrect,
-                  'notAttempted': _notAttempted,
-                });
-
-            userResultMap = {};
-            total = 0;
-            _correct = 0;
-            _incorrect = 0;
-            _notAttempted = 0;
-            if (response.data['status'] == '200') {
-              userResultList = [];
-
-              progressDialog.dismiss();
-              NAlertDialog(
-                blur: 10,
-                dismissable: false,
-                dialogStyle: DialogStyle(),
-                title: Text("Your Quiz is Completed"),
-              ).show(context);
-              await Future.delayed(Duration(seconds: 2));
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          Subjects(message: 'Quiz Attempted')),
-                  (route) => false);
-            } else {
-              progressDialog.dismiss();
-
-              await NAlertDialog(
-                dismissable: false,
-                dialogStyle: DialogStyle(titleDivider: true),
-                title: Text("Opps Something Went Worng!"),
-                content: Text("Please check your connectivity and try Again.."),
-                actions: <Widget>[
-                  TextButton(
-                      child: Text("Ok"),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      }),
-                ],
-              ).show(context);
-            }
-          } catch (e) {
-            await NAlertDialog(
-              dismissable: false,
-              dialogStyle: DialogStyle(titleDivider: true),
-              title: Text("Opps Something Went Worng!"),
-              content: Text("Please check your connectivity and try Again.."),
-              actions: <Widget>[
-                TextButton(
-                    child: Text("Ok"),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    }),
-              ],
-            ).show(context);
-          }
-        },
+        onPressed: submitQuiz,
       ),
     );
   }
@@ -202,10 +265,13 @@ class QuizPlayTile extends StatefulWidget {
   _QuizPlayTileState createState() => _QuizPlayTileState();
 }
 
-class _QuizPlayTileState extends State<QuizPlayTile> {
+class _QuizPlayTileState extends State<QuizPlayTile>
+    with AutomaticKeepAliveClientMixin {
+  get wantKeepAlive => true;
   String optionSelected = "";
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -227,15 +293,9 @@ class _QuizPlayTileState extends State<QuizPlayTile> {
                   widget.questionModel.correctOption) {
                 optionSelected = widget.questionModel.option1;
 
-                _correct = _correct + 1;
-                _incorrect = _incorrect - 1;
-
                 setState(() {});
               } else {
                 optionSelected = widget.questionModel.option1;
-
-                _incorrect = _incorrect + 1;
-                _correct = _correct - 1;
 
                 setState(() {});
               }
@@ -244,15 +304,11 @@ class _QuizPlayTileState extends State<QuizPlayTile> {
                   widget.questionModel.correctOption) {
                 optionSelected = widget.questionModel.option1;
                 widget.questionModel.answred = true;
-                _correct = _correct + 1;
-                _notAttempted = _notAttempted - 1;
 
                 setState(() {});
               } else {
                 optionSelected = widget.questionModel.option1;
                 widget.questionModel.answred = true;
-                _incorrect = _incorrect + 1;
-                _notAttempted = _notAttempted - 1;
 
                 setState(() {});
               }
@@ -276,15 +332,9 @@ class _QuizPlayTileState extends State<QuizPlayTile> {
                   widget.questionModel.correctOption) {
                 optionSelected = widget.questionModel.option2;
 
-                _correct = _correct + 1;
-                _incorrect = _incorrect - 1;
-
                 setState(() {});
               } else {
                 optionSelected = widget.questionModel.option2;
-
-                _incorrect = _incorrect + 1;
-                _correct = _correct - 1;
 
                 setState(() {});
               }
@@ -293,15 +343,11 @@ class _QuizPlayTileState extends State<QuizPlayTile> {
                   widget.questionModel.correctOption) {
                 optionSelected = widget.questionModel.option2;
                 widget.questionModel.answred = true;
-                _correct = _correct + 1;
-                _notAttempted = _notAttempted - 1;
 
                 setState(() {});
               } else {
                 optionSelected = widget.questionModel.option2;
                 widget.questionModel.answred = true;
-                _incorrect = _incorrect + 1;
-                _notAttempted = _notAttempted - 1;
 
                 setState(() {});
               }
@@ -325,15 +371,9 @@ class _QuizPlayTileState extends State<QuizPlayTile> {
                   widget.questionModel.correctOption) {
                 optionSelected = widget.questionModel.option3;
 
-                _correct = _correct + 1;
-                _incorrect = _incorrect - 1;
-
                 setState(() {});
               } else {
                 optionSelected = widget.questionModel.option3;
-
-                _incorrect = _incorrect + 1;
-                _correct = _correct - 1;
 
                 setState(() {});
               }
@@ -342,15 +382,11 @@ class _QuizPlayTileState extends State<QuizPlayTile> {
                   widget.questionModel.correctOption) {
                 optionSelected = widget.questionModel.option3;
                 widget.questionModel.answred = true;
-                _correct = _correct + 1;
-                _notAttempted = _notAttempted - 1;
 
                 setState(() {});
               } else {
                 optionSelected = widget.questionModel.option3;
                 widget.questionModel.answred = true;
-                _incorrect = _incorrect + 1;
-                _notAttempted = _notAttempted - 1;
 
                 setState(() {});
               }
@@ -374,15 +410,9 @@ class _QuizPlayTileState extends State<QuizPlayTile> {
                   widget.questionModel.correctOption) {
                 optionSelected = widget.questionModel.option4;
 
-                _correct = _correct + 1;
-                _incorrect = _incorrect - 1;
-
                 setState(() {});
               } else {
                 optionSelected = widget.questionModel.option4;
-
-                _incorrect = _incorrect + 1;
-                _correct = _correct - 1;
 
                 setState(() {});
               }
@@ -391,15 +421,11 @@ class _QuizPlayTileState extends State<QuizPlayTile> {
                   widget.questionModel.correctOption) {
                 optionSelected = widget.questionModel.option4;
                 widget.questionModel.answred = true;
-                _correct = _correct + 1;
-                _notAttempted = _notAttempted - 1;
 
                 setState(() {});
               } else {
                 optionSelected = widget.questionModel.option4;
                 widget.questionModel.answred = true;
-                _incorrect = _incorrect + 1;
-                _notAttempted = _notAttempted - 1;
 
                 setState(() {});
               }
