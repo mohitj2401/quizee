@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:athena/helper/helper.dart';
 import 'package:athena/models/questions.dart';
 import 'package:athena/views/subjects.dart';
-import 'package:flutter_countdown_timer/countdown_timer_controller.dart';
 import 'package:flutter_countdown_timer/current_remaining_time.dart';
 import 'package:ndialog/ndialog.dart';
 import 'package:athena/views/quiz_play_widget.dart';

@@ -1,5 +1,5 @@
 import 'package:athena/helper/helper.dart';
-import 'package:athena/service/auth.dart';
+
 import 'package:athena/views/home.dart';
 import 'package:athena/views/signin.dart';
 import 'package:athena/widget/dialog.dart';
@@ -9,7 +9,6 @@ import 'package:ndialog/ndialog.dart';
 import 'package:flutter/material.dart';
 
 Widget appBarMain(BuildContext context) {
-  AuthService authService = new AuthService();
   return AppBar(
     title: Center(
         child: Text(
@@ -152,7 +151,7 @@ Future<void> showMyDialog(BuildContext context, String successmsg) async {
       return AlertDialog(
         title: Text(successmsg),
         actions: <Widget>[
-          FlatButton(
+          TextButton(
             child: Text('Okay'),
             onPressed: () {
               Navigator.of(context).pop();

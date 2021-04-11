@@ -1,6 +1,6 @@
 import 'package:athena/helper/helper.dart';
 import 'package:athena/service/auth.dart';
-import 'package:athena/views/home.dart';
+
 import 'package:athena/views/signup.dart';
 import 'package:athena/views/subjects.dart';
 import 'package:dio/dio.dart';
