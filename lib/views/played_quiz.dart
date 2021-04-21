@@ -1,4 +1,5 @@
 import 'package:athena/helper/helper.dart';
+import 'package:athena/views/myaccount.dart';
 import 'package:athena/views/signin.dart';
 import 'package:athena/views/subjects.dart';
 import 'package:dio/dio.dart';
@@ -35,7 +36,7 @@ class _PlayedQuizState extends State<PlayedQuiz> {
     storeapi();
     Downloader.getPermission();
     getDataFun = getData();
-    print(getDataFun);
+
     super.initState();
   }
 
@@ -190,7 +191,10 @@ class _PlayedQuizState extends State<PlayedQuiz> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 1,
         onTap: (index) async {
-          if (index == 2) {}
+          if (index == 2) {
+            Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (context) => MyAccount()));
+          }
           if (index == 0) {
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => Subjects(message: '')));
