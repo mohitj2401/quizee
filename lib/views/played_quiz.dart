@@ -35,14 +35,15 @@ class _PlayedQuizState extends State<PlayedQuiz> {
     storeapi();
     Downloader.getPermission();
     getDataFun = getData();
+    print(getDataFun);
     super.initState();
   }
 
   getData() async {
     var api = await HelperFunctions.getUserApiKey();
     if (api != null || api != '') {
-      String url =
-          "http://192.168.137.1/flutter/public/api/result/getquiz/" + api_token;
+      String url = "http://192.168.43.109/flutter/public/api/result/getquiz/" +
+          api_token;
 
       try {
         Response response = await Dio().get(url);
@@ -151,7 +152,7 @@ class _PlayedQuizState extends State<PlayedQuiz> {
                           Navigator.pop(context);
 
                           String url =
-                              "http://192.168.137.1/flutter/public/api/result/search/" +
+                              "http://192.168.43.109/flutter/public/api/result/search/" +
                                   api_token +
                                   '/' +
                                   searchQuiz.text;
@@ -238,10 +239,10 @@ class _PlayedQuizState extends State<PlayedQuiz> {
                           onTap: () async {
                             try {
                               var url =
-                                  "http://192.168.137.1/flutter/public/api/download/result/" +
+                                  "http://192.168.43.109/flutter/public/api/download/result/" +
                                       api_token +
                                       '/' +
-                                      subjectsGet[index]['id'].toString();
+                                      subjectsGet[index]['quiz_id'].toString();
                               Downloader.download(
                                   url,
                                   subjectsGet[index]['title'] + ' result',

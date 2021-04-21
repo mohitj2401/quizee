@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:athena/helper/helper.dart';
 import 'package:athena/views/play_quiz.dart';
+import 'package:athena/views/quiz_detail.dart';
 import 'package:athena/views/signin.dart';
 import 'package:flutter/material.dart';
 import 'package:athena/widget/dialog.dart';
@@ -36,12 +37,21 @@ class _HomeState extends State<Home> {
               child: ListView.builder(
                 itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
+                  if (DateTime.parse(snapshot.data[index]['start_time'])
+                      .isAfter(DateTime.now())) {
+                    print(DateTime.parse(snapshot.data[index]['start_time']));
+                  }
+                  // if (DateTime.now() < (snapshot.data[index]['start_time'])) {
+                  //   print("Yes");
+                  // }
                   return QuizTile(
                     title: snapshot.data[index]['title'],
                     description: snapshot.data[index]['description'],
                     imgUrl: snapshot.data[index]['image'],
                     quizId: snapshot.data[index]['id'].toString(),
                     duration: snapshot.data[index]['duration'],
+                    startDate:
+                        DateTime.parse(snapshot.data[index]['start_time']),
                     func: _handleRefresh,
                   );
                 },
@@ -94,7 +104,7 @@ class _HomeState extends State<Home> {
   getData() async {
     var api = await HelperFunctions.getUserApiKey();
     if (api != null || api != '') {
-      String url = "http://192.168.137.1/flutter/public/api/quiz/get/" +
+      String url = "http://192.168.43.109/flutter/public/api/quiz/get/" +
           widget.subject_id.toString() +
           '/' +
           api_token;
@@ -194,6 +204,7 @@ class QuizTile extends StatelessWidget {
   final String quizId;
   final String description;
   final int duration;
+  final DateTime startDate;
 
   final Function func;
   QuizTile({
@@ -203,19 +214,30 @@ class QuizTile extends StatelessWidget {
     @required this.quizId,
     @required this.func,
     @required this.duration,
+    @required this.startDate,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
+      onTap:
+          // startDate.isBefore(DateTime.now())
+          //     ?
+          () {
+        // Navigator.pushReplacement(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => PlayQuiz(quizId, duration),
+        //   ),
+        // );
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => PlayQuiz(quizId,duration),
+            builder: (context) => QuizDetails(quizId),
           ),
         );
       },
+      // : null,
       child: Container(
         height: 150,
         margin: EdgeInsets.only(bottom: 8, top: 2),
@@ -224,7 +246,7 @@ class QuizTile extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: Image.network(
-                "http://192.168.137.1/flutter/storage/app/public/" + imgUrl,
+                "http://192.168.43.109/flutter/storage/app/public/" + imgUrl,
                 width: MediaQuery.of(context).size.width - 48,
                 fit: BoxFit.cover,
               ),

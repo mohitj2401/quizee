@@ -50,7 +50,7 @@ class _SubjectsState extends State<Subjects> {
     var api = await HelperFunctions.getUserApiKey();
     if (api != null || api != '') {
       String url =
-          "http://192.168.137.1/flutter/public/api/subjects/get/" + api_token;
+          "http://192.168.43.109/flutter/public/api/subjects/get/" + api_token;
 
       try {
         Response response = await Dio().get(url);

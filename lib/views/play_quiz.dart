@@ -106,7 +106,7 @@ class _PlayQuizState extends State<PlayQuiz> with WidgetsBindingObserver {
     }
     String url = apiToken + "/" + widget.quizId;
     Response response = await Dio()
-        .get("http://192.168.137.1/flutter/public/api/question/get/" + url);
+        .get("http://192.168.43.109/flutter/public/api/question/get/" + url);
     return response.data['data'];
   }
 
@@ -133,7 +133,7 @@ class _PlayQuizState extends State<PlayQuiz> with WidgetsBindingObserver {
 
     try {
       Response response = await Dio().post(
-          "http://192.168.137.1/flutter/public/api/result/store/" + apiToken,
+          "http://192.168.43.109/flutter/public/api/result/store/" + apiToken,
           data: {
             "data1": jsonEncode(userResultList),
             'quizId': widget.quizId,
