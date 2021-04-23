@@ -1,6 +1,5 @@
 import 'package:athena/helper/helper.dart';
 import 'package:athena/views/change_pass.dart';
-import 'package:athena/views/play_quiz.dart';
 import 'package:athena/views/played_quiz.dart';
 import 'package:athena/views/signin.dart';
 import 'package:athena/views/subjects.dart';
@@ -10,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:ndialog/ndialog.dart';
 
 class MyAccount extends StatefulWidget {
+  final String message;
+  MyAccount({@required this.message});
   @override
   _MyAccountState createState() => _MyAccountState();
 }
@@ -20,6 +21,8 @@ class _MyAccountState extends State<MyAccount> {
   bool isLoading = true;
   bool isStarted = false;
   Map quizdetails = {};
+  bool notified = false;
+
   getData() async {
     var api = await HelperFunctions.getUserApiKey();
     if (api != null || api != '') {
@@ -83,6 +86,12 @@ class _MyAccountState extends State<MyAccount> {
   void initState() {
     storeapi();
     getData();
+    if (widget.message != '' && !notified) {
+      Future(() {
+        final snackBar = SnackBar(content: Text(widget.message));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      });
+    }
     super.initState();
   }
 

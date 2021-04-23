@@ -109,7 +109,10 @@ class _UpdateDetailsState extends State<UpdateDetails> {
           if (response.data['status'] == '200') {
             await Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (context) => MyAccount()),
+                MaterialPageRoute(
+                    builder: (context) => MyAccount(
+                          message: 'User Details Updated',
+                        )),
                 (route) => false);
 
             setState(() {

@@ -193,7 +193,11 @@ class _PlayedQuizState extends State<PlayedQuiz> {
         onTap: (index) async {
           if (index == 2) {
             Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => MyAccount()));
+                context,
+                MaterialPageRoute(
+                    builder: (context) => MyAccount(
+                          message: '',
+                        )));
           }
           if (index == 0) {
             Navigator.pushReplacement(context,

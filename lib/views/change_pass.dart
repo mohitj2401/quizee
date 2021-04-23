@@ -64,17 +64,32 @@ class _ChangePassState extends State<ChangePass> {
           });
         } else {
           if (response.data['status'] == '200') {
-            await HelperFunctions.saveUserApiKey(response.data['api_token']);
-            await HelperFunctions.saveUserLoggedIn(true);
             await Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (context) => MyAccount()),
+                MaterialPageRoute(
+                    builder: (context) => MyAccount(
+                          message: 'Password changed successfully',
+                        )),
                 (route) => false);
 
             setState(() {
               isLoading = false;
             });
           } else {
+            if (response.data['status'] == '501') {
+              await NAlertDialog(
+                dismissable: false,
+                dialogStyle: DialogStyle(titleDivider: true),
+                title: Text(response.data['msg']),
+                actions: <Widget>[
+                  TextButton(
+                      child: Text("Ok"),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      }),
+                ],
+              ).show(context);
+            }
             setState(() {
               isLoading = false;
             });
@@ -136,11 +151,7 @@ class _ChangePassState extends State<ChangePass> {
                             if (value.isEmpty) {
                               return "Please Enter Password";
                             }
-                            if (!RegExp(
-                                    r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$')
-                                .hasMatch(value)) {
-                              return 'Please enter strong password';
-                            }
+
                             return null;
                           },
                           controller: oldpasswordEditingController,
