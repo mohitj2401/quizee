@@ -31,7 +31,7 @@ class _MyAccountState extends State<MyAccount> {
 
       try {
         Response response = await Dio().get(url);
-        print(response);
+
         if (response.data['status'] == '200') {
           quizdetails = response.data['user'];
           setState(() {
@@ -147,78 +147,71 @@ class _MyAccountState extends State<MyAccount> {
           ? Center(child: CircularProgressIndicator())
           : Container(
               padding: EdgeInsets.all(20),
-              child: ListView(
+              child: Column(
                 children: [
                   Center(
                       child: Icon(
                     Icons.person_rounded,
                     size: 100,
                   )),
-                  Spacer(),
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Text('Name'),
-                        Spacer(),
-                        Text(quizdetails['name']),
-                      ],
-                    ),
+                  SizedBox(height: 50),
+                  Row(
+                    children: [
+                      Text('Name'),
+                      Spacer(),
+                      Text(quizdetails['name']),
+                    ],
                   ),
                   SizedBox(height: 20),
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Text('Email'),
-                        Spacer(),
-                        Text(quizdetails['email']),
-                      ],
-                    ),
+                  Row(
+                    children: [
+                      Text('Email'),
+                      Spacer(),
+                      Text(quizdetails['email']),
+                    ],
                   ),
                   SizedBox(height: 20),
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Text('Quiz Attempted'),
-                        Spacer(),
-                        Text(quizdetails['result_count'].toString()),
-                      ],
-                    ),
+                  Row(
+                    children: [
+                      Text('Quiz Attempted'),
+                      Spacer(),
+                      Text(quizdetails['result_count'].toString()),
+                    ],
                   ),
-                  Expanded(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          alignment: Alignment.center,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => UpdateDetails(),
-                                ),
-                              );
-                            },
-                            child: Text('Update Details'),
-                          ),
+                  SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        alignment: Alignment.center,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => UpdateDetails(),
+                              ),
+                            );
+                          },
+                          child: Text('Update Details'),
                         ),
-                        SizedBox(width: 10),
-                        Container(
-                          alignment: Alignment.center,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ChangePass(),
-                                ),
-                              );
-                            },
-                            child: Text('Change Password'),
-                          ),
+                      ),
+                      SizedBox(width: 10),
+                      Container(
+                        alignment: Alignment.center,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChangePass(),
+                              ),
+                            );
+                          },
+                          child: Text('Change Password'),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   )
                 ],
               ),

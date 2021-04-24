@@ -100,7 +100,6 @@ class _UpdateDetailsState extends State<UpdateDetails> {
               "name": nameTextEditingController.text,
               "email": emailTextEditingController.text,
             });
-        print(response);
         if (response.data['email'] != null) {
           setState(() {
             isLoading = false;
