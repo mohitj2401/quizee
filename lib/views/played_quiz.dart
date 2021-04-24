@@ -250,7 +250,8 @@ class _PlayedQuizState extends State<PlayedQuiz> {
                                   "http://192.168.43.109/flutter/public/api/download/result/" +
                                       api_token +
                                       '/' +
-                                      subjectsGet[index]['quiz_id'].toString();
+                                      subjectsGet[index]['id'].toString();
+
                               Downloader.download(
                                   url,
                                   subjectsGet[index]['title'] + ' result',
