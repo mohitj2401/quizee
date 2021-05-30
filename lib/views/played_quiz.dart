@@ -281,9 +281,11 @@ class _PlayedQuizState extends State<PlayedQuiz> {
                                 final task = await FlutterDownloader.enqueue(
                                   url: url,
                                   savedDir: exterdir == null
-                                      ? 'dowload'
+                                      ? '/storage/emulated/0/Download'
                                       : exterdir.path,
-                                  fileName: 'result.pdf',
+                                  fileName:
+                                      subjectsGet[index]['title'].toString() +
+                                          '.pdf',
                                   showNotification: true,
                                   openFileFromNotification: true,
                                 );
