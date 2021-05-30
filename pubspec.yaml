@@ -42,6 +42,9 @@ dependencies:
   downloader: ^0.0.1
   flutter_countdown_timer: ^4.0.2
   intl: ^0.17.0
+  flutter_downloader: ^1.6.0
+  permission_handler: ^8.0.0+2
+
 
 
 

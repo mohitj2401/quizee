@@ -145,75 +145,77 @@ class _MyAccountState extends State<MyAccount> {
       ),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
-          : Container(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  Center(
-                      child: Icon(
-                    Icons.person_rounded,
-                    size: 100,
-                  )),
-                  SizedBox(height: 50),
-                  Row(
-                    children: [
-                      Text('Name'),
-                      Spacer(),
-                      Text(quizdetails['name']),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Text('Email'),
-                      Spacer(),
-                      Text(quizdetails['email']),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Text('Quiz Attempted'),
-                      Spacer(),
-                      Text(quizdetails['result_count'].toString()),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        alignment: Alignment.center,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => UpdateDetails(),
-                              ),
-                            );
-                          },
-                          child: Text('Update Details'),
+          : SingleChildScrollView(
+              child: Container(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    Center(
+                        child: Icon(
+                      Icons.person_rounded,
+                      size: 100,
+                    )),
+                    SizedBox(height: 50),
+                    Row(
+                      children: [
+                        Text('Name'),
+                        Spacer(),
+                        Text(quizdetails['name']),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Text('Email'),
+                        Spacer(),
+                        Text(quizdetails['email']),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Text('Quiz Attempted'),
+                        Spacer(),
+                        Text(quizdetails['result_count'].toString()),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          alignment: Alignment.center,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => UpdateDetails(),
+                                ),
+                              );
+                            },
+                            child: Text('Update Details'),
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 10),
-                      Container(
-                        alignment: Alignment.center,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ChangePass(),
-                              ),
-                            );
-                          },
-                          child: Text('Change Password'),
+                        SizedBox(width: 10),
+                        Container(
+                          alignment: Alignment.center,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ChangePass(),
+                                ),
+                              );
+                            },
+                            child: Text('Change Password'),
+                          ),
                         ),
-                      ),
-                    ],
-                  )
-                ],
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
     );

@@ -2,8 +2,11 @@ import 'package:athena/helper/helper.dart';
 import 'package:athena/views/signin.dart';
 import 'package:athena/views/subjects.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await FlutterDownloader.initialize();
   runApp(MyApp());
 }
 

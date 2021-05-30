@@ -1,10 +1,15 @@
+import 'dart:isolate';
+import 'dart:ui';
+
 import 'package:athena/helper/helper.dart';
 import 'package:athena/views/myaccount.dart';
 import 'package:athena/views/signin.dart';
 import 'package:athena/views/subjects.dart';
 import 'package:dio/dio.dart';
-import 'package:downloader/downloader.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:ndialog/ndialog.dart';
 
 class PlayedQuiz extends StatefulWidget {
@@ -20,6 +25,17 @@ class _PlayedQuizState extends State<PlayedQuiz> {
 
   Future getDataFun;
   final formKey = GlobalKey<FormState>();
+
+  static void downloadCallback(
+      String id, DownloadTaskStatus status, int progress) {
+    print(
+        'Background Isolate Callback: task ($id) is in status ($status) and process ($progress)');
+
+    final SendPort send =
+        IsolateNameServer.lookupPortByName('downloader_send_port');
+    send.send([id, status, progress]);
+  }
+
   storeapi() async {
     api_token = await HelperFunctions.getUserApiKey();
 
@@ -33,8 +49,9 @@ class _PlayedQuizState extends State<PlayedQuiz> {
 
   @override
   void initState() {
+    FlutterDownloader.registerCallback(downloadCallback);
     storeapi();
-    Downloader.getPermission();
+
     getDataFun = getData();
 
     super.initState();
@@ -251,17 +268,26 @@ class _PlayedQuizState extends State<PlayedQuiz> {
                                       api_token +
                                       '/' +
                                       subjectsGet[index]['id'].toString();
+                              // print(url);
+                              final status = await Permission.storage.request();
+                              if (!status.isGranted) {
+                                // ignore: avoid_print
+                                print('Permission Denied');
+                              } else {
+                                final exterdir =
+                                    await getExternalStorageDirectory();
 
-                              Downloader.download(
-                                  url,
-                                  subjectsGet[index]['title'] + ' result',
-                                  ".pdf");
-                              Future(() {
-                                final snackBar =
-                                    SnackBar(content: Text('Download Sarted'));
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(snackBar);
-                              });
+                                // ignore: unused_local_variable1
+                                final task = await FlutterDownloader.enqueue(
+                                  url: url,
+                                  savedDir: exterdir == null
+                                      ? 'dowload'
+                                      : exterdir.path,
+                                  fileName: 'result.pdf',
+                                  showNotification: true,
+                                  openFileFromNotification: true,
+                                );
+                              }
                             } catch (e) {
                               print(e);
                               await NDialog(
