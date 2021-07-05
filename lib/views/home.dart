@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'package:athena/helper/helper.dart';
-import 'package:athena/views/play_quiz.dart';
-import 'package:athena/views/quiz_detail.dart';
-import 'package:athena/views/signin.dart';
+import 'package:quizie/helper/helper.dart';
+import 'package:quizie/views/play_quiz.dart';
+import 'package:quizie/views/quiz_detail.dart';
+import 'package:quizie/views/signin.dart';
 import 'package:flutter/material.dart';
-import 'package:athena/widget/dialog.dart';
+import 'package:quizie/widget/dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:ndialog/ndialog.dart';
 

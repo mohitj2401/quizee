@@ -1,10 +1,10 @@
 import 'dart:isolate';
 import 'dart:ui';
 
-import 'package:athena/helper/helper.dart';
-import 'package:athena/views/myaccount.dart';
-import 'package:athena/views/signin.dart';
-import 'package:athena/views/subjects.dart';
+import 'package:quizie/helper/helper.dart';
+import 'package:quizie/views/myaccount.dart';
+import 'package:quizie/views/signin.dart';
+import 'package:quizie/views/subjects.dart';
 import 'package:dio/dio.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';

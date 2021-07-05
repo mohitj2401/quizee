@@ -1,4 +1,4 @@
-package com.example.athena
+package com.example.quizie
 
 import io.flutter.embedding.android.FlutterActivity
 

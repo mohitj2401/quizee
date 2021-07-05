@@ -1,6 +1,6 @@
 {
-    "name": "athena",
-    "short_name": "athena",
+    "name": "quizie",
+    "short_name": "quizie",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

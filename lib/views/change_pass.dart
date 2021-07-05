@@ -1,8 +1,8 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:athena/helper/helper.dart';
-import 'package:athena/views/myaccount.dart';
-import 'package:athena/views/signin.dart';
-import 'package:athena/views/subjects.dart';
+import 'package:quizie/helper/helper.dart';
+import 'package:quizie/views/myaccount.dart';
+import 'package:quizie/views/signin.dart';
+import 'package:quizie/views/subjects.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:ndialog/ndialog.dart';

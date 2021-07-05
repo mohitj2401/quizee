@@ -1,9 +1,9 @@
-import 'package:athena/helper/helper.dart';
-import 'package:athena/views/change_pass.dart';
-import 'package:athena/views/played_quiz.dart';
-import 'package:athena/views/signin.dart';
-import 'package:athena/views/subjects.dart';
-import 'package:athena/views/update_details.dart';
+import 'package:quizie/helper/helper.dart';
+import 'package:quizie/views/change_pass.dart';
+import 'package:quizie/views/played_quiz.dart';
+import 'package:quizie/views/signin.dart';
+import 'package:quizie/views/subjects.dart';
+import 'package:quizie/views/update_details.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:ndialog/ndialog.dart';

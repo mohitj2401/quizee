@@ -1,5 +1,5 @@
-import 'package:athena/helper/helper.dart';
-import 'package:athena/views/signin.dart';
+import 'package:quizie/helper/helper.dart';
+import 'package:quizie/views/signin.dart';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'package:ndialog/ndialog.dart';
-import 'package:athena/views/play_quiz.dart';
+import 'package:quizie/views/play_quiz.dart';
 
 class QuizDetails extends StatefulWidget {
   final String quizId;

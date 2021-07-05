@@ -1,4 +1,4 @@
-# athena
+# quizie
 
 A new Flutter project.
 

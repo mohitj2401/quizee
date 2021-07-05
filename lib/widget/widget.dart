@@ -1,8 +1,8 @@
-import 'package:athena/helper/helper.dart';
+import 'package:quizie/helper/helper.dart';
 
-import 'package:athena/views/home.dart';
-import 'package:athena/views/signin.dart';
-import 'package:athena/widget/dialog.dart';
+import 'package:quizie/views/home.dart';
+import 'package:quizie/views/signin.dart';
+import 'package:quizie/widget/dialog.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ndialog/ndialog.dart';
 
@@ -12,7 +12,7 @@ Widget appBarMain(BuildContext context) {
   return AppBar(
     title: Center(
         child: Text(
-      "Athena",
+      "Quizie",
       style: TextStyle(color: Colors.blue, fontSize: 24),
     )),
     iconTheme: IconThemeData(color: Colors.black),
@@ -58,7 +58,7 @@ Widget appBarMainWithoutSignout(BuildContext context) {
   return AppBar(
     title: Center(
         child: Text(
-      "Athena",
+      "quizie",
       style: TextStyle(color: Colors.blue, fontSize: 24),
     )),
     iconTheme: IconThemeData(color: Colors.black),

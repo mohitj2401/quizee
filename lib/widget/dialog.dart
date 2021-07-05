@@ -1,5 +1,5 @@
-import 'package:athena/helper/helper.dart';
-import 'package:athena/service/auth.dart';
+import 'package:quizie/helper/helper.dart';
+import 'package:quizie/service/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 

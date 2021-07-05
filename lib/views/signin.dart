@@ -1,8 +1,8 @@
-import 'package:athena/helper/helper.dart';
-import 'package:athena/service/auth.dart';
+import 'package:quizie/helper/helper.dart';
+import 'package:quizie/service/auth.dart';
 
-import 'package:athena/views/signup.dart';
-import 'package:athena/views/subjects.dart';
+import 'package:quizie/views/signup.dart';
+import 'package:quizie/views/subjects.dart';
 import 'package:dio/dio.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 
