@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:quizie/constant/constant.dart';
 import 'package:quizie/helper/helper.dart';
 import 'package:quizie/views/play_quiz.dart';
 import 'package:quizie/views/quiz_detail.dart';
@@ -104,7 +105,8 @@ class _HomeState extends State<Home> {
   getData() async {
     var api = await HelperFunctions.getUserApiKey();
     if (api != null || api != '') {
-      String url = "http://192.168.43.109/flutter/public/api/quiz/get/" +
+      String url = base_url +
+          "/api/quiz/get/" +
           widget.subject_id.toString() +
           '/' +
           api_token;

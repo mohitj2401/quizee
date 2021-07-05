@@ -1,3 +1,4 @@
+import 'package:quizie/constant/constant.dart';
 import 'package:quizie/helper/helper.dart';
 import 'package:quizie/views/home.dart';
 import 'package:quizie/views/myaccount.dart';
@@ -50,8 +51,7 @@ class _SubjectsState extends State<Subjects> {
   getData() async {
     var api = await HelperFunctions.getUserApiKey();
     if (api != null || api != '') {
-      String url =
-          "http://192.168.43.109/flutter/public/api/subjects/get/" + api_token;
+      String url = base_url + "/api/subjects/get/" + api_token;
 
       try {
         Response response = await Dio().get(url);
@@ -158,11 +158,11 @@ class _SubjectsState extends State<Subjects> {
                         if (formKey.currentState.validate()) {
                           Navigator.pop(context);
 
-                          String url =
-                              "http://192.168.137.1/flutter/public/api/subjects/search/" +
-                                  api_token +
-                                  '/' +
-                                  searchSubject.text;
+                          String url = base_url +
+                              "/api/subjects/search/" +
+                              api_token +
+                              '/' +
+                              searchSubject.text;
                           setState(() {
                             searchSubject.text = '';
                             getDataFun = updateData(url);

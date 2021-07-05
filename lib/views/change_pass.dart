@@ -1,4 +1,5 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:quizie/constant/constant.dart';
 import 'package:quizie/helper/helper.dart';
 import 'package:quizie/views/myaccount.dart';
 import 'package:quizie/views/signin.dart';
@@ -50,13 +51,11 @@ class _ChangePassState extends State<ChangePass> {
         isLoading = true;
       });
       try {
-        Response response = await Dio().post(
-            "http://192.168.43.109/flutter/public/api/update/password/" +
-                api_token,
-            data: {
-              "old_pass": oldpasswordEditingController.text,
-              "new_pass": passwordTextEditingController.text,
-            });
+        Response response = await Dio()
+            .post(base_url + "/api/update/password/" + api_token, data: {
+          "old_pass": oldpasswordEditingController.text,
+          "new_pass": passwordTextEditingController.text,
+        });
 
         if (response.data['email'] != null) {
           setState(() {

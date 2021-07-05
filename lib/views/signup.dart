@@ -1,3 +1,4 @@
+import 'package:quizie/constant/constant.dart';
 import 'package:quizie/helper/helper.dart';
 import 'package:quizie/service/auth.dart';
 import 'package:quizie/views/signin.dart';
@@ -29,8 +30,7 @@ class _SignUpState extends State<SignUp> {
         isLoading = true;
       });
       try {
-        Response response = await Dio()
-            .post("http://192.168.43.109/flutter/public/api/register", data: {
+        Response response = await Dio().post(base_url + "/api/register", data: {
           "name": nameTextEditingController.text,
           "email": emailTextEditingController.text,
           'password': passwordTextEditingController.text,

@@ -1,3 +1,4 @@
+import 'package:quizie/constant/constant.dart';
 import 'package:quizie/helper/helper.dart';
 import 'package:quizie/views/change_pass.dart';
 import 'package:quizie/views/played_quiz.dart';
@@ -26,8 +27,7 @@ class _MyAccountState extends State<MyAccount> {
   getData() async {
     var api = await HelperFunctions.getUserApiKey();
     if (api != null || api != '') {
-      String url =
-          "http://192.168.43.109/flutter/public/api/get/user/" + api_token;
+      String url = base_url + "/api/get/user/" + api_token;
 
       try {
         Response response = await Dio().get(url);

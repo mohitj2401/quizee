@@ -1,4 +1,5 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:quizie/constant/constant.dart';
 import 'package:quizie/helper/helper.dart';
 import 'package:quizie/views/myaccount.dart';
 import 'package:quizie/views/signin.dart';
@@ -24,8 +25,7 @@ class _UpdateDetailsState extends State<UpdateDetails> {
   getData() async {
     var api = await HelperFunctions.getUserApiKey();
     if (api != null || api != '') {
-      String url =
-          "http://192.168.43.109/flutter/public/api/get/user/" + api_token;
+      String url = base_url + "/api/get/user/" + api_token;
 
       try {
         Response response = await Dio().get(url);
@@ -94,12 +94,11 @@ class _UpdateDetailsState extends State<UpdateDetails> {
         isLoading = true;
       });
       try {
-        Response response = await Dio().post(
-            "http://192.168.43.109/flutter/public/api/update/user/" + api_token,
-            data: {
-              "name": nameTextEditingController.text,
-              "email": emailTextEditingController.text,
-            });
+        Response response =
+            await Dio().post(base_url + "/api/update/user/" + api_token, data: {
+          "name": nameTextEditingController.text,
+          "email": emailTextEditingController.text,
+        });
         if (response.data['email'] != null) {
           setState(() {
             isLoading = false;

@@ -1,6 +1,7 @@
 import 'dart:isolate';
 import 'dart:ui';
 
+import 'package:quizie/constant/constant.dart';
 import 'package:quizie/helper/helper.dart';
 import 'package:quizie/views/myaccount.dart';
 import 'package:quizie/views/signin.dart';
@@ -60,8 +61,7 @@ class _PlayedQuizState extends State<PlayedQuiz> {
   getData() async {
     var api = await HelperFunctions.getUserApiKey();
     if (api != null || api != '') {
-      String url = "http://192.168.43.109/flutter/public/api/result/getquiz/" +
-          api_token;
+      String url = base_url + "/api/result/getquiz/" + api_token;
 
       try {
         Response response = await Dio().get(url);
@@ -169,11 +169,11 @@ class _PlayedQuizState extends State<PlayedQuiz> {
                         if (formKey.currentState.validate()) {
                           Navigator.pop(context);
 
-                          String url =
-                              "http://192.168.43.109/flutter/public/api/result/search/" +
-                                  api_token +
-                                  '/' +
-                                  searchQuiz.text;
+                          String url = base_url +
+                              "/api/result/search/" +
+                              api_token +
+                              '/' +
+                              searchQuiz.text;
                           setState(() {
                             searchQuiz.text = '';
                             getDataFun = updateData(url);
@@ -263,11 +263,11 @@ class _PlayedQuizState extends State<PlayedQuiz> {
                         return ListTile(
                           onTap: () async {
                             try {
-                              var url =
-                                  "http://192.168.43.109/flutter/public/api/download/result/" +
-                                      api_token +
-                                      '/' +
-                                      subjectsGet[index]['id'].toString();
+                              var url = base_url +
+                                  "/api/download/result/" +
+                                  api_token +
+                                  '/' +
+                                  subjectsGet[index]['id'].toString();
                               // print(url);
                               final status = await Permission.storage.request();
                               if (!status.isGranted) {

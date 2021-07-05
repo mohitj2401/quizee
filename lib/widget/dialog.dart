@@ -1,3 +1,4 @@
+import 'package:quizie/constant/constant.dart';
 import 'package:quizie/helper/helper.dart';
 import 'package:quizie/service/auth.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +35,8 @@ class Dialogs {
               onPressed: () async {
                 try {
                   Response response = await Dio().post(
-                    "http://192.168.43.109/flutter/public/api/quiz/delete/1610699043LzzFWZHFKbaiatVLjO6kYvaWBJ6zFg/" +
+                    base_url +
+                        "/api/quiz/delete/1610699043LzzFWZHFKbaiatVLjO6kYvaWBJ6zFg/" +
                         quizId,
                   );
                 } catch (e) {}

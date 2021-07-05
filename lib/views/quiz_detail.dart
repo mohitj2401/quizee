@@ -1,3 +1,4 @@
+import 'package:quizie/constant/constant.dart';
 import 'package:quizie/helper/helper.dart';
 import 'package:quizie/views/signin.dart';
 
@@ -27,10 +28,8 @@ class _QuizDetailsState extends State<QuizDetails> {
   getData() async {
     var api = await HelperFunctions.getUserApiKey();
     if (api != null || api != '') {
-      String url = "http://192.168.43.109/flutter/public/api/quiz/get/" +
-          widget.quizId +
-          "/" +
-          api_token;
+      String url =
+          base_url + "/api/quiz/get/" + widget.quizId + "/" + api_token;
 
       try {
         Response response = await Dio().get(url);

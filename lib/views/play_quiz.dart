@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:quizie/constant/constant.dart';
 import 'package:quizie/helper/helper.dart';
 import 'package:quizie/models/questions.dart';
 import 'package:quizie/views/subjects.dart';
@@ -105,8 +106,7 @@ class _PlayQuizState extends State<PlayQuiz> with WidgetsBindingObserver {
           MaterialPageRoute(builder: (context) => SignIn()), (route) => false);
     }
     String url = apiToken + "/" + widget.quizId;
-    Response response = await Dio()
-        .get("http://192.168.43.109/flutter/public/api/question/get/" + url);
+    Response response = await Dio().get(base_url + "/api/question/get/" + url);
     return response.data['data'];
   }
 
@@ -132,12 +132,11 @@ class _PlayQuizState extends State<PlayQuiz> with WidgetsBindingObserver {
     });
 
     try {
-      Response response = await Dio().post(
-          "http://192.168.43.109/flutter/public/api/result/store/" + apiToken,
-          data: {
-            "data1": jsonEncode(userResultList),
-            'quizId': widget.quizId,
-          });
+      Response response =
+          await Dio().post(base_url + "/api/result/store/" + apiToken, data: {
+        "data1": jsonEncode(userResultList),
+        'quizId': widget.quizId,
+      });
 
       userResultMap = {};
 
