@@ -18,7 +18,8 @@ https://github.com/mohitj2401/Quiz_app
 
 ## Screenshot
 
-<img src="https://github.com/mohitj2401/quizee/blob/master/Screenshots/Screenshot_20210705-071635_Quizie.png" width="250">  <img src="https://github.com/mohitj2401/quizee/blob/master/Screenshots/Screenshot_20210705-071643_Quizie.png" width="250">   <img src="https://github.com/mohitj2401/quizee/blob/master/Screenshots/Screenshot_20210705-071934_Quizie.png" width="250">   <img src="https://github.com/mohitj2401/quizee/blob/master/Screenshots/Screenshot_20210705-072000_Quizie.png" width="250">
+<img src="https://github.com/mohitj2401/Portfolio/tree/main/img/quiz/1 (1).png" width="250"> 
+<img src="https://github.com/mohitj2401/quizee/blob/master/Screenshots/Screenshot_20210705-071643_Quizie.png" width="250">   <img src="https://github.com/mohitj2401/quizee/blob/master/Screenshots/Screenshot_20210705-071934_Quizie.png" width="250">   <img src="https://github.com/mohitj2401/quizee/blob/master/Screenshots/Screenshot_20210705-072000_Quizie.png" width="250">
    
    
    
